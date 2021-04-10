@@ -14,17 +14,9 @@ def execute(filters=None):
 def get_column():
 	columns = [
 		{
-		"label": "Sales Invoice",
+		"label": "Invoice",
 		"fieldname": "sales_invoice",
-		"fieldtype": "Link",
-		"options":"Sales Invoice",
-		"width": 200
-	},
-	{
-		"label": "POS Invoice",
-		"fieldname": "pos_invoice",
-		"fieldtype": "Link",
-		"options":"POS Invoice",
+		"fieldtype": "Data",
 		"width": 200
 	},
 	{
@@ -32,30 +24,45 @@ def get_column():
 		"fieldname": "received_amount",
 		"fieldtype": "Currency",
 		"width": 200
-	}]
+	},
+	{
+		"label": "Sales Person",
+		"fieldname": "sales_person",
+		"fieldtype": "Link",
+		"options":"Sales Person",
+		"width": 200
+	},
+	{
+		"label": "Incentive",
+		"fieldname": "sincentive",
+		"fieldtype": "Currency",
+		"width": 200
+	},
+	]
 	return columns
 
 def get_data(filters):
 	data =[]
 
 	if 'cf_sales_person' not in filters:
-		sales_invoice_list = frappe.db.get_list('Sales Invoice',filters=[['posting_date' ,'>=',filters['cf_from_date']],
-			['posting_date' ,'<=',filters['cf_to_date']]],fields=['name','base_grand_total','outstanding_amount'])
-		pos_invoice_list = frappe.db.get_list('POS Invoice',filters=[['posting_date' ,'>=',filters['cf_from_date']],
-			['posting_date' ,'<=',filters['cf_to_date']]],fields=['name','paid_amount'])
-		data = [{'sales_invoice':inv['name'],'pos_invoice':'', 'received_amount':inv['base_grand_total']-inv['outstanding_amount']} for inv in  sales_invoice_list]
-		data.extend( [{'sales_invoice':'','pos_invoice':inv['name'], 'received_amount':inv['paid_amount']} for inv in  pos_invoice_list])
+		si_pe_list = frappe.db.sql('''select si.name as sales_invoice, si.base_grand_total - si.outstanding_amount as received_amount,
+			sp.sales_person, sp.incentives
+			from `tabSales Invoice` si join `tabSales Team` sp on sp.parent = si.name  where si.posting_date between %s and %s ''',(filters['cf_from_date'],filters['cf_to_date']))
+		pos_je_list = frappe.db.sql('''select pi.name as pos_invoice , pi.paid_amount as received_amount, 
+			sp.sales_person, sp.incentives
+			from `tabSales Team` sp join
+			`tabPOS Invoice` pi on sp.parent = pi.name where pi.posting_date between %s and %s ''',(filters['cf_from_date'],filters['cf_to_date']))
+
+		data = si_pe_list + pos_je_list
 	else:
 		filtered_sales_invoice = frappe.db.sql(
-			'''select si.name as sales_invoice, "" as pos_invoice , si.base_grand_total - si.outstanding_amount as received_amount
-			from `tabSales Team` sp,
-			`tabSales Invoice` si where sp.parenttype = "Sales Invoice" 
-			and sp.sales_person = %s and sp.parent = si.name ''',filters['cf_sales_person'])
+			'''select si.name as sales_invoice, si.base_grand_total - si.outstanding_amount as received_amount, sp.sales_person, sp.incentives
+			from `tabSales Team` sp join `tabSales Invoice` si on sp.parent = si.name 
+			where sp.sales_person = %s and  si.posting_date between %s and %s ''',(filters['cf_sales_person'],filters['cf_from_date'],filters['cf_to_date']))
 		filtered_pos_invoice = frappe.db.sql(
-			'''select "" as sales_invoice, pi.name as pos_invoice , pi.paid_amount as received_amount
-			from `tabSales Team` sp,
-			`tabPOS Invoice` pi where sp.parenttype = "POS Invoice" 
-			and sp.sales_person = %s and sp.parent = pi.name ''',filters['cf_sales_person'])
+			'''select pi.name as pos_invoice , pi.paid_amount as received_amount, sp.sales_person, sp.incentives
+			from `tabSales Team` sp join `tabPOS Invoice` pi on sp.parent = pi.name
+			where sp.sales_person = %s and pi.posting_date between %s and %s ''',(filters['cf_sales_person'],filters['cf_from_date'],filters['cf_to_date']))
 
 		data = filtered_sales_invoice + filtered_pos_invoice
 	return data
