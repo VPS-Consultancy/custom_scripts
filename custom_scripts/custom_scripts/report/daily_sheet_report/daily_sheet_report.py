@@ -56,9 +56,9 @@ def get_column():
 
 def get_data(filters):
 	data =[]
-	si_list = frappe.db.sql('''select %s as invoice_type, si.name as invoice, si.base_grand_total - si.outstanding_amount as received_amount
+	si_list = frappe.db.sql('''select %s as invoice_type, si.name as invoice, si.base_grand_total - si.outstanding_amount as received_amount, 0 as paid_amount
 		from `tabSales Invoice` si where si.posting_date between %s and %s and si.docstatus = 1''',('Sales Invoice',filters['cf_from_date'],filters['cf_to_date']),  as_dict = True)
-	pos_list = frappe.db.sql('''select %s as invoice_type, pi.name as invoice, pi.paid_amount as received_amount
+	pos_list = frappe.db.sql('''select %s as invoice_type, pi.name as invoice, pi.paid_amount as received_amount, 0 as paid_amount
 		from `tabPOS Invoice` pi 
 		where pi.posting_date between %s and %s and pi.docstatus = 1''',('POS Invoice',filters['cf_from_date'],filters['cf_to_date']),  as_dict = True)
 	pe_list = frappe.db.sql('''select %s as expense_type, pe.name as expense, pe.paid_amount as paid_amount
@@ -67,5 +67,6 @@ def get_data(filters):
 	je_list = frappe.db.sql('''select  %s as expense_type, je.name as expense, je.total_debit as paid_amount
 		from `tabJournal Entry` je 
 		where je.posting_date  between %s and %s and je.docstatus = 1''',('Journal Entry',filters['cf_from_date'],filters['cf_to_date']),  as_dict = True)
+
 	data = si_list + pos_list + je_list + pe_list
 	return data
