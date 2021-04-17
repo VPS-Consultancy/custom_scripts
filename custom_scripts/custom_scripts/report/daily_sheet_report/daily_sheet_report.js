@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 frappe.query_reports["Daily Sheet Report"] = {
+
 	"filters": [
 		{
 			fieldname: "cf_company",
@@ -13,19 +14,31 @@ frappe.query_reports["Daily Sheet Report"] = {
 			reqd: 1
 		},
 		{
-			fieldname: "cf_from_date",
-			label: __("From Date"),
+			fieldname: "cf_date",
+			label: __("Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.get_today(),
+			on_change:  function(){
+
+				var date = frappe.query_report.get_filter_value('cf_date')
+				frappe.db.exists("Daily Balance",`DB-${frappe.datetime.add_days(date, -1)}`)
+				.then(r => {
+					if(r){
+					frappe.db.get_value("Daily Balance", {"date": frappe.datetime.add_days(date, -1)}, "amount", 
+					(r1) => {
+						frappe.query_report.set_filter_value('cf_opening_balance',r1.amount) });
+					}else{
+						frappe.query_report.set_filter_value('cf_opening_balance',0);
+					}
+						});
+			},
 			reqd: 1
 		},
 		{
-			fieldname:"cf_to_date",
-			label: __("To Date"),
-			fieldtype: "Date",
-			default: frappe.datetime.get_today(),
-			reqd: 1
-		}
-
+			fieldname: "cf_opening_balance",
+			label: __("Opening Balance"),
+			fieldtype: "Currency",
+			read_only: 1
+		},
 	]
 };
