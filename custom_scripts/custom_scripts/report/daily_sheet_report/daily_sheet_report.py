@@ -99,7 +99,7 @@ def get_data(filters):
 	
 	je_list = frappe.db.sql('''select  %s as expense_type, je.name as ex_voucher_no, je.total_debit as ex_amount, je.remark as ex_remarks, 'Cash' as ex_payment_mode
 		from `tabJournal Entry` je
-		where je.posting_date  between %s and %s and je.docstatus = 1''',('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+		where je.voucher_type = 'Cash Entry' and je.posting_date  between %s and %s and je.docstatus = 1''',('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	data = pos_list + pe_list_rc + je_list + pe_list_pay
 	
