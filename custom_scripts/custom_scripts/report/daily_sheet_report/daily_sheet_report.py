@@ -80,26 +80,35 @@ def get_column():
 
 def get_data(filters):
 	data =[]
-	# si_list = frappe.db.sql('''select %s as invoice_type, si.name as invoice, si.base_grand_total - si.outstanding_amount as received_amount, 0 as paid_amount
-	# 	from `tabSales Invoice` si where si.posting_date between %s and %s and si.docstatus = 1''',('Sales Invoice',filters['cf_from_date'],filters['cf_to_date']),  as_dict = True)
-	pos_list = frappe.db.sql('''select %s as inward_voucher_type, pi.name as voucher_no, sip.mode_of_payment as in_payment_mode, sip.base_amount as in_amount
-		from `tabPOS Invoice` pi join `tabSales Invoice Payment` sip
-		on sip.parent = pi.name
-		where pi.posting_date between %s and %s and pi.docstatus = 1''',('POS Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	pos_list = frappe.db.sql('''select %s as inward_voucher_type, pi.name as voucher_no,
+					sip.mode_of_payment as in_payment_mode, sip.base_amount as in_amount
+					from `tabPOS Invoice` pi join `tabSales Invoice Payment` sip
+					on sip.parent = pi.name
+					where pi.posting_date between %s and %s and pi.docstatus = 1''',
+					('POS Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
-	pe_list_rc = frappe.db.sql('''select %s as inward_voucher_type, pe.name as voucher_no, pe.paid_amount as in_amount, pe.remarks as in_remarks,
-		pe.mode_of_payment as in_payment_mode
-		from `tabPayment Entry` pe 
-		where pe.payment_type = "Receive" and pe.posting_date  between %s and %s and pe.docstatus = 1''',('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	pe_list_rc = frappe.db.sql('''select %s as inward_voucher_type, pe.name as voucher_no,
+					pe.paid_amount as in_amount, pe.remarks as in_remarks,
+					pe.mode_of_payment as in_payment_mode
+					from `tabPayment Entry` pe 
+					where pe.payment_type = "Receive" and pe.posting_date 
+					between %s and %s and pe.docstatus = 1''',
+					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
-	pe_list_pay = frappe.db.sql('''select %s as expense_type, pe.name as ex_voucher_no, pe.paid_amount as ex_amount, pe.remarks as ex_remarks,
-		pe.mode_of_payment as ex_payment_mode
-		from `tabPayment Entry` pe 
-		where pe.payment_type = "Pay" and pe.posting_date  between %s and %s and pe.docstatus = 1''',('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	pe_list_pay = frappe.db.sql('''select %s as expense_type, pe.name as ex_voucher_no, 
+					pe.paid_amount as ex_amount, pe.remarks as ex_remarks,
+					pe.mode_of_payment as ex_payment_mode
+					from `tabPayment Entry` pe 
+					where pe.payment_type = "Pay" and pe.posting_date  
+					between %s and %s and pe.docstatus = 1''',
+					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 	
-	je_list = frappe.db.sql('''select  %s as expense_type, je.name as ex_voucher_no, je.total_debit as ex_amount, je.remark as ex_remarks, 'Cash' as ex_payment_mode
-		from `tabJournal Entry` je
-		where je.voucher_type = 'Cash Entry' and je.posting_date  between %s and %s and je.docstatus = 1''',('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	je_list = frappe.db.sql('''select  %s as expense_type, je.name as ex_voucher_no, 
+				je.total_debit as ex_amount, je.remark as ex_remarks, 'Cash' as ex_payment_mode
+				from `tabJournal Entry` je
+				where je.voucher_type = 'Cash Entry' and je.posting_date  between %s and %s 
+				and je.docstatus = 1''',
+				('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	data = pos_list + pe_list_rc + je_list + pe_list_pay
 	
