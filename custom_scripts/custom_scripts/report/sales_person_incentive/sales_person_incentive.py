@@ -73,7 +73,7 @@ def get_data(filters):
 		si_list = frappe.db.sql('''select "Sales Invoice" as invoice_type, 
 						si.name as invoice, si.status as status,
 						si.rounded_total - si.outstanding_amount as received_amount,
-						sp.sales_person as sales_person , si.rounded_total * sp.commission_rate as sincentive,
+						sp.sales_person as sales_person , si.rounded_total * (sp.commission_rate / 100) as sincentive,
 						si.rounded_total as grand_total, si.customer as customer
 						from `tabSales Invoice` si left join `tabSales Team` sp on sp.parent = si.name 
 						where si.posting_date between %s and %s and si.docstatus = 1''',
@@ -81,7 +81,7 @@ def get_data(filters):
 		
 		pos_list = frappe.db.sql('''select "POS Invoice" as invoice_type, pi.name as invoice, 
 						pi.paid_amount as received_amount, pi.status as status,
-						sp.sales_person as sales_person, pi.rounded_total * sp.commission_rate as sincentive,
+						sp.sales_person as sales_person, pi.rounded_total * (sp.commission_rate / 100) as sincentive,
 						pi.customer as customer, pi.rounded_total as grand_total
 						from `tabSales Team` sp left join `tabPOS Invoice` pi on sp.parent = pi.name 
 						where pi.posting_date between %s and %s and pi.docstatus = 1''',
@@ -91,7 +91,7 @@ def get_data(filters):
 	else:
 		filtered_sales_invoice = frappe.db.sql('''select "Sales Invoice" as invoice_type, si.name as invoice,
 									si.rounded_total - si.outstanding_amount as received_amount,
-									sp.sales_person as sales_person, si.rounded_total * sp.commission_rate as sincentive,
+									sp.sales_person as sales_person, si.rounded_total * (sp.commission_rate / 100) as sincentive,
 									si.status as status,si.rounded_total as grand_total,
 									si.customer as customer
 									from `tabSales Team` sp join `tabSales Invoice` si on sp.parent = si.name 
@@ -100,7 +100,7 @@ def get_data(filters):
 
 		filtered_pos_invoice = frappe.db.sql('''select "POS Invoice" as invoice_type, pi.name as invoice,
 									pi.paid_amount as received_amount, sp.sales_person as sales_person,
-									pi.rounded_total * sp.commission_rate as sincentive, pi.status as status, pi.customer as customer,
+									pi.rounded_total * (sp.commission_rate / 100) as sincentive, pi.status as status, pi.customer as customer,
 									pi.rounded_total as grand_total
 									from `tabSales Team` sp join `tabPOS Invoice` pi on sp.parent = pi.name
 									where sp.sales_person = %s and pi.posting_date between %s and %s and pi.docstatus = 1''',
