@@ -121,7 +121,7 @@ class GrossProfitGenerator(object):
 			if self.skip_row(row, self.product_bundles):
 				continue
 
-			row.base_amount = flt(row.base_net_amount, self.currency_precision)
+			row.base_amount = flt(row.qty * row.rate, self.currency_precision)
 
 			product_bundles = []
 			if row.update_stock:
@@ -142,7 +142,7 @@ class GrossProfitGenerator(object):
 			# get buying rate
 			if row.qty:
 				row.buying_rate = flt(row.buying_amount / row.qty, self.float_precision)
-				row.base_rate = flt(row.base_amount / row.qty, self.float_precision)
+				row.base_rate = flt(row.rate, self.float_precision)
 			else:
 				row.buying_rate, row.base_rate = 0.0, 0.0
 
@@ -168,6 +168,7 @@ class GrossProfitGenerator(object):
 						new_row = row
 					else:
 						new_row.qty += row.qty
+						new_row.rate = row.rate
 						new_row.buying_amount += flt(row.buying_amount, self.currency_precision)
 						new_row.base_amount += flt(row.base_amount, self.currency_precision)
 				new_row = self.set_average_rate(new_row)
@@ -190,7 +191,7 @@ class GrossProfitGenerator(object):
 		new_row.gross_profit_percent = flt(((new_row.gross_profit / new_row.base_amount) * 100.0), self.currency_precision) \
 			if new_row.base_amount else 0
 		new_row.buying_rate = flt(new_row.buying_amount / new_row.qty, self.float_precision) if new_row.qty else 0
-		new_row.base_rate = flt(new_row.base_amount / new_row.qty, self.float_precision) if new_row.qty else 0
+		new_row.base_rate = flt(new_row.rate, self.float_precision) if new_row.rate else 0
 
 		return new_row
 
@@ -316,7 +317,7 @@ class GrossProfitGenerator(object):
 				`si`.posting_date, `si`.posting_time,
 				`si`.project, `si`.update_stock,
 				`si`.customer, `si`.customer_group,
-				`si`.territory, `inv_item`.item_code,
+				`si`.territory, `inv_item`.item_code,`inv_item`.rate,
 				`inv_item`.item_name, `inv_item`.description,
 				`inv_item`.warehouse, `inv_item`.item_group,
 				`inv_item`.brand, `inv_item`.dn_detail,
