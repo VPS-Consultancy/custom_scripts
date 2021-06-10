@@ -7,7 +7,8 @@ from frappe import _, scrub
 from erpnext.stock.utils import get_incoming_rate
 from erpnext.controllers.queries import get_match_cond
 from frappe.utils import flt, cint
-from erpnext.stock.dashboard.item_dashboard import get_data
+# from erpnext.stock.dashboard.item_dashboard import get_data
+from erpnext.stock.report.stock_ledger.stock_ledger import get_stock_ledger_entries
 
 def execute(filters=None):
     if not filters:
@@ -146,10 +147,16 @@ def execute(filters=None):
     columns = get_columns(group_wise_columns, filters)
     if filters.group_by == 'Item Code':
         for src in gross_profit_data.grouped_data:
-            res = get_data(src['item_code'])
-            src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
-            src['available_qty'] = sum([row['actual_qty'] for row in res])
-            src['available_buying_amount'] = src['available_qty'] * src['available_valuation_rate']
+            custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
+            res = get_stock_ledger_entries(custom_filters, [src['item_code']])
+            if res:
+                src['available_valuation_rate'] = res[-1]['valuation_rate']
+                src['available_qty'] = res[-1]['qty_after_transaction']
+                src['available_buying_amount'] = res[-1]['stock_value']
+            # res = get_data(src['item_code'])
+            # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
+            # src['available_qty'] = sum([row['actual_qty'] for row in res])
+            # src['available_buying_amount'] = src['available_qty'] * src['available_valuation_rate']
 
     for src in gross_profit_data.grouped_data:
         row = []
