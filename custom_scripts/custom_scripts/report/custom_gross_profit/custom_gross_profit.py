@@ -7,7 +7,7 @@ from frappe import _, scrub
 from erpnext.stock.utils import get_incoming_rate
 from erpnext.controllers.queries import get_match_cond
 from frappe.utils import flt, cint
-from erpnext.stock.report.stock_ledger.stock_ledger import get_opening_balance
+from erpnext.stock.dashboard.item_dashboard import get_data
 
 def execute(filters=None):
     if not filters:
@@ -54,6 +54,9 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "available_qty",
+                "available_valuation_rate",
+                "available_buying_amount"
             ],
             "warehouse": [
                 "warehouse",
@@ -74,6 +77,9 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "available_qty",
+                "available_valuation_rate",
+                "available_buying_amount"
             ],
             "item_group": [
                 "item_group",
@@ -84,6 +90,9 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "available_qty",
+                "available_valuation_rate",
+                "available_buying_amount"
             ],
             "customer": [
                 "customer",
@@ -135,6 +144,12 @@ def execute(filters=None):
     )
 
     columns = get_columns(group_wise_columns, filters)
+    if filters.group_by == 'Item Code':
+        for src in gross_profit_data.grouped_data:
+            res = get_data(src['item_code'])
+            src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
+            src['available_qty'] = sum([row['actual_qty'] for row in res])
+            src['available_buying_amount'] = src['available_qty'] * src['available_valuation_rate']
 
     for src in gross_profit_data.grouped_data:
         row = []
@@ -161,7 +176,7 @@ def get_columns(group_wise_columns, filters):
             "brand": _("Brand") + ":Link/Brand:100",
             "description": _("Description") + ":Data:100",
             "warehouse": _("Warehouse") + ":Link/Warehouse:100",
-            "qty": _("Available Qty") + ":Float:80",
+            "qty": _("Qty") + ":Float:80",
             "base_rate": _("Avg. Selling Rate") + ":Currency/currency:100",
             "buying_rate": _("Valuation Rate") + ":Currency/currency:100",
             "base_amount": _("Selling Amount") + ":Currency/currency:100",
@@ -174,6 +189,9 @@ def get_columns(group_wise_columns, filters):
             "customer": _("Customer") + ":Link/Customer:100",
             "customer_group": _("Customer Group") + ":Link/Customer Group:100",
             "territory": _("Territory") + ":Link/Territory:100",
+            "available_qty": _("Available Qty") + ":Float:80",
+            "available_valuation_rate": _("Available Valuation Rate") + ":Currency/currency:100",
+            "available_buying_amount": _("Available Buying Amount") + ":Currency/currency:100"
         }
     )
 
