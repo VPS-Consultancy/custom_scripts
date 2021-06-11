@@ -171,11 +171,11 @@ def execute(filters=None):
             item_list = frappe.db.get_all('Item',{'item_group':src['item_group']},'name')
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, item['name'])
-                frappe.log_erro(res)
+                frappe.log_error(res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                     total_available_qty += res[-1]['qty_after_transaction']
-                    frappe.log_erro(f'{total_purchase_qty}, {total_available_qty}')
+                    frappe.log_error(f'{total_purchase_qty}, {total_available_qty}')
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
             src['total_purchase_qty'] = total_purchase_qty
