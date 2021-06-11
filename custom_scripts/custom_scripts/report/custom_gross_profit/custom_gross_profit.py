@@ -56,6 +56,7 @@ def execute(filters=None):
                 "gross_profit",
                 "gross_profit_percent",
                 "total_purchase_qty",
+                "total_purchase_amount",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -80,6 +81,7 @@ def execute(filters=None):
                 "gross_profit",
                 "gross_profit_percent",
                 "total_purchase_qty",
+                "total_purchase_amount",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -94,6 +96,7 @@ def execute(filters=None):
                 "gross_profit",
                 "gross_profit_percent",
                 "total_purchase_qty",
+                "total_purchase_amount",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -156,6 +159,7 @@ def execute(filters=None):
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
                 src['available_qty'] = res[-1]['qty_after_transaction']
                 src['total_purchase_qty'] = res[-1]['actual_qty']
+                src['total_purchase_amount'] = res[-1]['actual_qty'] * res[-1]['valuation_rate']
                 src['available_buying_amount'] = res[-1]['stock_value']
             # res = get_data(src['item_code'])
             # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
@@ -201,6 +205,7 @@ def get_columns(group_wise_columns, filters):
             "customer_group": _("Customer Group") + ":Link/Customer Group:100",
             "territory": _("Territory") + ":Link/Territory:100",
             "total_purchase_qty": _("Total Purchase Qty") + ":Float:80",
+            "total_purchase_amount": _("Total Purchase Amount") + ":Float:80",
             "available_qty": _("Available Qty") + ":Float:80",
             "available_valuation_rate": _("Available Valuation Rate") + ":Currency/currency:100",
             "available_buying_amount": _("Available Buying Amount") + ":Currency/currency:100"
