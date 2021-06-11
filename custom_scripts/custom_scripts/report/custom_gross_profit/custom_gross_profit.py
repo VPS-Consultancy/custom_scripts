@@ -170,7 +170,7 @@ def execute(filters=None):
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             item_list = frappe.db.get_all('Item',{'item_group':src['item_group']},'name')
             for item in item_list:
-                res = get_stock_ledger_entries(custom_filters, item['name'])
+                res = get_stock_ledger_entries(custom_filters, [item['name']])
                 frappe.log_error(res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
@@ -189,7 +189,7 @@ def execute(filters=None):
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             item_list = frappe.db.get_all('Item',{'brand':src['brand']},'name')
             for item in item_list:
-                res = get_stock_ledger_entries(custom_filters, item['name'])
+                res = get_stock_ledger_entries(custom_filters, [item['name']])
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                     total_available_qty += res[-1]['qty_after_transaction']
