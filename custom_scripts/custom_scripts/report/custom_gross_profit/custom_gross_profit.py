@@ -156,10 +156,11 @@ def execute(filters=None):
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             res = get_stock_ledger_entries(custom_filters, [src['item_code']])
             if res:
+                total_purchase_qty = sum([row['actual_qty'] for row in res])
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
                 src['available_qty'] = res[-1]['qty_after_transaction']
-                src['total_purchase_qty'] = res[-1]['actual_qty']
-                src['total_purchase_amount'] = res[-1]['actual_qty'] * res[-1]['valuation_rate']
+                src['total_purchase_qty'] = total_purchase_qty
+                src['total_purchase_amount'] = total_purchase_qty * res[-1]['valuation_rate']
                 src['available_buying_amount'] = res[-1]['stock_value']
             # res = get_data(src['item_code'])
             # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
