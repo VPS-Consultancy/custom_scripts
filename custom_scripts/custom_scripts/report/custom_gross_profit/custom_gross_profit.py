@@ -55,6 +55,7 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "total_purchase_qty",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -78,6 +79,7 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "total_purchase_qty",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -91,6 +93,7 @@ def execute(filters=None):
                 "buying_amount",
                 "gross_profit",
                 "gross_profit_percent",
+                "total_purchase_qty",
                 "available_qty",
                 "available_valuation_rate",
                 "available_buying_amount"
@@ -152,6 +155,7 @@ def execute(filters=None):
             if res:
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
                 src['available_qty'] = res[-1]['qty_after_transaction']
+                src['total_purchase_qty'] = res[-1]['in_qty']
                 src['available_buying_amount'] = res[-1]['stock_value']
             # res = get_data(src['item_code'])
             # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
@@ -196,6 +200,7 @@ def get_columns(group_wise_columns, filters):
             "customer": _("Customer") + ":Link/Customer:100",
             "customer_group": _("Customer Group") + ":Link/Customer Group:100",
             "territory": _("Territory") + ":Link/Territory:100",
+            "total_purchase_qty": _("Total Purchase Qty") + ":Float:80",
             "available_qty": _("Available Qty") + ":Float:80",
             "available_valuation_rate": _("Available Valuation Rate") + ":Currency/currency:100",
             "available_buying_amount": _("Available Buying Amount") + ":Currency/currency:100"
