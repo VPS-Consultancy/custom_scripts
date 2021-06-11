@@ -167,7 +167,7 @@ def execute(filters=None):
         for src in gross_profit_data.grouped_data:
             final_item_list = []
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
-            item_list = frappe.db.get_all('Item'{'item_group':src['item_group']},'name')
+            item_list = frappe.db.get_all('Item',{'item_group':src['item_group']},'name')
             for item in item_list:
                 final_item_list.append(item['name'])
             if final_item_list:
