@@ -155,7 +155,7 @@ def execute(filters=None):
             if res:
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
                 src['available_qty'] = res[-1]['qty_after_transaction']
-                src['total_purchase_qty'] = res[-1]['in_qty']
+                src['total_purchase_qty'] = res[-1]['actual_qty']
                 src['available_buying_amount'] = res[-1]['stock_value']
             # res = get_data(src['item_code'])
             # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
