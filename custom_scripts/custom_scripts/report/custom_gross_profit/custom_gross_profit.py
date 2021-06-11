@@ -172,7 +172,7 @@ def execute(filters=None):
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, item['name'])
                 if res:
-                    total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
+                    total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                     total_available_qty += res[-1]['qty_after_transaction']
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
@@ -189,7 +189,7 @@ def execute(filters=None):
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, item['name'])
                 if res:
-                    total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
+                    total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                     total_available_qty += res[-1]['qty_after_transaction']
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
