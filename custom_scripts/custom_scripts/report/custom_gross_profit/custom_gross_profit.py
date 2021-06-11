@@ -156,7 +156,7 @@ def execute(filters=None):
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             res = get_stock_ledger_entries(custom_filters, [src['item_code']])
             if res:
-                total_purchase_qty = sum([row['actual_qty'] for row in res])
+                total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
                 src['available_qty'] = res[-1]['qty_after_transaction']
                 src['total_purchase_qty'] = total_purchase_qty
