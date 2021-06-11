@@ -162,6 +162,24 @@ def execute(filters=None):
                 src['total_purchase_qty'] = total_purchase_qty
                 src['total_purchase_amount'] = total_purchase_qty * res[-1]['valuation_rate']
                 src['available_buying_amount'] = res[-1]['stock_value']
+
+    if filters.group_by == 'Item Group':
+        for src in gross_profit_data.grouped_data:
+            final_item_list = []
+            custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
+            item_list = frappe.db.get_all('Item'{'item_group':src['item_group']},'name')
+            for item in item_list:
+                final_item_list.append(item['name'])
+            if final_item_list:
+                res = get_stock_ledger_entries(custom_filters, final_item_list)
+                if res:
+                    total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
+                    total_available_qty = sum([row['qty_after_transaction'] for row in res if row['qty_after_transaction'] > 0])
+                    src['available_valuation_rate'] = src['buying_rate']
+                    src['available_qty'] = res[-1]['qty_after_transaction']
+                    src['total_purchase_qty'] = total_purchase_qty
+                    src['total_purchase_amount'] = total_purchase_qty * src['buying_rate']
+                    src['available_buying_amount'] = res[-1]['stock_value'] * src['buying_rate']
             # res = get_data(src['item_code'])
             # src['available_valuation_rate'] = frappe.db.get_value('Item', {'name':src['item_code']},'valuation_rate')
             # src['available_qty'] = sum([row['actual_qty'] for row in res])
