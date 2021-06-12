@@ -156,7 +156,7 @@ def execute(filters=None):
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             res = get_stock_ledger_entries(custom_filters, [src['item_code']])
             stock_ledger_res = fetch_stock_ledger(custom_filters, [src['item_code']])
-            stock_bal_res = get_item_warehouse_map(stock_ledger_res)
+            stock_bal_res = get_item_warehouse_map(custom_filters, stock_ledger_res)
             if res:
                 total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
@@ -175,7 +175,7 @@ def execute(filters=None):
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, [item['name']])
                 stock_ledger_res = fetch_stock_ledger(custom_filters, [item['name']])
-                stock_bal_res = get_item_warehouse_map(stock_ledger_res)
+                stock_bal_res = get_item_warehouse_map(custom_filters, stock_ledger_res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 if stock_ledger_res and stock_bal_res:    
@@ -195,7 +195,7 @@ def execute(filters=None):
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, [item['name']])
                 stock_ledger_res = fetch_stock_ledger(custom_filters, [item['name']])
-                stock_bal_res = get_item_warehouse_map(stock_ledger_res)
+                stock_bal_res = get_item_warehouse_map(custom_filters, stock_ledger_res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 if stock_ledger_res and stock_bal_res:    
