@@ -163,7 +163,7 @@ def execute(filters=None):
                 src['total_purchase_qty'] = total_purchase_qty
                 src['total_purchase_amount'] = total_purchase_qty * res[-1]['valuation_rate']
             if stock_ledger_res and stock_bal_res:
-                src['available_qty'] = sum([row['bal_qty'] for row in stock_bal_res])
+                src['available_qty'] = sum([stock_bal_res[row]['bal_qty'] for row in sorted(stock_bal_res) if row])
                 src['available_buying_amount'] = src['available_qty'] * src['buying_rate']
 
     if filters.group_by == 'Item Group':
@@ -179,7 +179,7 @@ def execute(filters=None):
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 if stock_ledger_res and stock_bal_res:    
-                    total_available_qty += sum([row['bal_qty'] for row in stock_bal_res])
+                    total_available_qty += sum([stock_bal_res[row]['bal_qty'] for row in sorted(stock_bal_res) if row])
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
             src['total_purchase_qty'] = total_purchase_qty
@@ -199,7 +199,7 @@ def execute(filters=None):
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 if stock_ledger_res and stock_bal_res:    
-                    total_available_qty += sum([row['bal_qty'] for row in stock_bal_res])
+                    total_available_qty += sum([stock_bal_res[row]['bal_qty'] for row in sorted(stock_bal_res) if row])
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
             src['total_purchase_qty'] = total_purchase_qty
