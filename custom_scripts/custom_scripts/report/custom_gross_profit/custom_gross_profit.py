@@ -155,13 +155,16 @@ def execute(filters=None):
         for src in gross_profit_data.grouped_data:
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
             res = get_stock_ledger_entries(custom_filters, [src['item_code']])
+            stock_ledger_res = fetch_stock_ledger(custom_filters, [src['item_code']])
+            stock_bal_res = get_item_warehouse_map(stock_ledger_res)
             if res:
                 total_purchase_qty = sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
                 src['available_valuation_rate'] = res[-1]['valuation_rate']
-                src['available_qty'] = res[-1]['qty_after_transaction']
                 src['total_purchase_qty'] = total_purchase_qty
                 src['total_purchase_amount'] = total_purchase_qty * res[-1]['valuation_rate']
-                src['available_buying_amount'] = res[-1]['stock_value']
+            if stock_ledger_res and stock_bal_res:
+                src['available_qty'] = sum([row['bal_qty'] for row in stock_bal_res])
+                src['available_buying_amount'] = src['available_qty'] * src['buying_rate']
 
     if filters.group_by == 'Item Group':
         for src in gross_profit_data.grouped_data:
@@ -171,9 +174,12 @@ def execute(filters=None):
             item_list = frappe.db.get_all('Item',{'item_group':src['item_group']},'name')
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, [item['name']])
+                stock_ledger_res = fetch_stock_ledger(custom_filters, [item['name']])
+                stock_bal_res = get_item_warehouse_map(stock_ledger_res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
-                    total_available_qty += res[-1]['qty_after_transaction']
+                if stock_ledger_res and stock_bal_res:    
+                    total_available_qty += sum([row['bal_qty'] for row in stock_bal_res])
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
             src['total_purchase_qty'] = total_purchase_qty
