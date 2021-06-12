@@ -7,7 +7,7 @@ from frappe import _, scrub
 from erpnext.stock.utils import get_incoming_rate
 from erpnext.controllers.queries import get_match_cond
 from frappe.utils import flt, cint
-# from erpnext.stock.dashboard.item_dashboard import get_data
+from erpnext.stock.report.stock_balance.stock_balance import get_item_warehouse_map, get_stock_ledger_entries as fetch_stock_ledger
 from erpnext.stock.report.stock_ledger.stock_ledger import get_stock_ledger_entries
 
 def execute(filters=None):
@@ -188,9 +188,12 @@ def execute(filters=None):
             item_list = frappe.db.get_all('Item',{'brand':src['brand']},'name')
             for item in item_list:
                 res = get_stock_ledger_entries(custom_filters, [item['name']])
+                stock_ledger_res = fetch_stock_ledger(custom_filters, [item['name']])
+                stock_bal_res = get_item_warehouse_map(stock_ledger_res)
                 if res:
                     total_purchase_qty += sum([row['actual_qty'] for row in res if row['actual_qty'] > 0])
-                    total_available_qty += res[-1]['qty_after_transaction']
+                if stock_ledger_res and stock_bal_res:    
+                    total_available_qty += sum([row['bal_qty'] for row in stock_bal_res])
             src['available_valuation_rate'] = src['buying_rate']
             src['available_qty'] = total_available_qty
             src['total_purchase_qty'] = total_purchase_qty
