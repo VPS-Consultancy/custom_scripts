@@ -597,7 +597,7 @@ class GrossProfitGenerator(object):
             self.filters,
             as_dict=1,
         )
-        for row in invoice:
+        for row in invoice_list:
             row.base_amount = get_itewise_tax_rate(row.total_taxes_and_charges, row.total, row.base_amount)
         return invoice_list
 
