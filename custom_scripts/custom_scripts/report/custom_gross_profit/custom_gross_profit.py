@@ -640,5 +640,4 @@ class GrossProfitGenerator(object):
         )
 
 def get_itewise_tax_rate(total_tax_amount, total_amount, item_amount):
-    flt(row.qty * row.rate, self.currency_precision)
     return flt((item_amount * (total_tax_amount / total_amount)), 2)
