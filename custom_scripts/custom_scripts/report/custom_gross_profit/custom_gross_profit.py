@@ -299,7 +299,7 @@ class GrossProfitGenerator(object):
             if self.skip_row(row, self.product_bundles):
                 continue
 
-            row.base_amount = flt(row.qty * row.rate, self.currency_precision)
+            # row.base_amount = flt(row.qty * row.rate, self.currency_precision)
 
             product_bundles = []
             if row.update_stock:
@@ -418,7 +418,9 @@ class GrossProfitGenerator(object):
         returned_invoices = frappe.db.sql(
             """
 			select
-				si.name, si_item.item_code, si_item.stock_qty as qty, si_item.base_net_amount as base_amount, si.return_against
+				si.name, si_item.item_code, si_item.stock_qty as qty, si_item.base_net_amount as base_amount, si.return_against,
+                si.total,
+                si.total_taxes_and_charges,
 			from
 				`tabSales Invoice` si, `tabSales Invoice Item` si_item
 			where
@@ -431,6 +433,7 @@ class GrossProfitGenerator(object):
 
         self.returned_invoices = frappe._dict()
         for inv in returned_invoices:
+            inv.base_amount = get_itewise_tax_rate(inv.total_taxes_and_charges, inv.total, inv.base_amount)
             self.returned_invoices.setdefault(
                 inv.return_against, frappe._dict()
             ).setdefault(inv.item_code, []).append(inv)
@@ -560,11 +563,12 @@ class GrossProfitGenerator(object):
         )
 
     def cust_query(self, inv_name, conditions, sales_person_cols, sales_team_table):
-        return frappe.db.sql(
+        invoice_list =  frappe.db.sql(
             """
 			select
 				`inv_item`.parenttype, `inv_item`.parent,
-				`si`.posting_date, `si`.posting_time,
+				`si`.posting_date, `si`.posting_time, `si`.total,
+                `si`.total_taxes_and_charges,
 				`si`.project, `si`.update_stock,
 				`si`.customer, `si`.customer_group,
 				`si`.territory, `inv_item`.item_code,`inv_item`.rate,
@@ -572,7 +576,7 @@ class GrossProfitGenerator(object):
 				`inv_item`.warehouse, `inv_item`.item_group,
 				`inv_item`.brand, `inv_item`.dn_detail,
 				`inv_item`.delivery_note, `inv_item`.stock_qty as qty,
-				`inv_item`.base_net_rate, `inv_item`.base_amount,
+				`inv_item`.base_net_rate, `inv_item`.base_net_amount as base_amount,
 				`inv_item`.name as "item_row", `si`.is_return,
 				`inv_item`.cost_center
 				{sales_person_cols}
@@ -593,6 +597,9 @@ class GrossProfitGenerator(object):
             self.filters,
             as_dict=1,
         )
+        for row in invoice:
+            row.base_amount = get_itewise_tax_rate(row.total_taxes_and_charges, row.total, row.base_amount)
+        return invoice_list
 
     def load_stock_ledger_entries(self):
         res = frappe.db.sql(
@@ -631,3 +638,7 @@ class GrossProfitGenerator(object):
             """select name from tabItem
 			where is_stock_item=0"""
         )
+
+def get_itewise_tax_rate(total_tax_amount, total_amount, item_amount):
+    flt(row.qty * row.rate, self.currency_precision)
+    return flt((item_amount * (total_tax_amount / total_amount)), 2)
