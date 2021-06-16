@@ -420,7 +420,7 @@ class GrossProfitGenerator(object):
 			select
 				si.name, si_item.item_code, si_item.stock_qty as qty, si_item.base_net_amount as base_amount, si.return_against,
                 si.total,
-                si.total_taxes_and_charges,
+                si.total_taxes_and_charges
 			from
 				`tabSales Invoice` si, `tabSales Invoice Item` si_item
 			where
