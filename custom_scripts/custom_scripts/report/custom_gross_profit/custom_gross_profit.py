@@ -231,7 +231,7 @@ def get_columns(group_wise_columns, filters):
             "brand": _("Brand") + ":Link/Brand:100",
             "description": _("Description") + ":Data:100",
             "warehouse": _("Warehouse") + ":Link/Warehouse:100",
-            "qty": _("Qty") + ":Float:80",
+            "qty": _("Selling Qty") + ":Float:80",
             "base_rate": _("Avg. Selling Rate") + ":Currency/currency:100",
             "buying_rate": _("Valuation Rate") + ":Currency/currency:100",
             "base_amount": _("Selling Amount") + ":Currency/currency:100",
@@ -419,7 +419,7 @@ class GrossProfitGenerator(object):
             """
 			select
 				si.name, si_item.item_code, si_item.stock_qty as qty, si_item.base_net_amount as base_amount, si.return_against,
-                si.total,
+                si.net_total as total,
                 si.total_taxes_and_charges
 			from
 				`tabSales Invoice` si, `tabSales Invoice Item` si_item
@@ -567,7 +567,7 @@ class GrossProfitGenerator(object):
             """
 			select
 				`inv_item`.parenttype, `inv_item`.parent,
-				`si`.posting_date, `si`.posting_time, `si`.total,
+				`si`.posting_date, `si`.posting_time, `si`.net_total as total,
                 `si`.total_taxes_and_charges,
 				`si`.project, `si`.update_stock,
 				`si`.customer, `si`.customer_group,
