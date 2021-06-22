@@ -231,7 +231,7 @@ def get_columns(group_wise_columns, filters):
             "brand": _("Brand") + ":Link/Brand:100",
             "description": _("Description") + ":Data:100",
             "warehouse": _("Warehouse") + ":Link/Warehouse:100",
-            "qty": _("Selling Qty") + ":Float:80",
+            "qty": _("Sold Qty") + ":Float:80",
             "base_rate": _("Avg. Selling Rate") + ":Currency/currency:100",
             "buying_rate": _("Valuation Rate") + ":Currency/currency:100",
             "base_amount": _("Selling Amount") + ":Currency/currency:100",
