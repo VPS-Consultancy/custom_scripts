@@ -83,9 +83,9 @@ app_license = "MIT"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance"
+}
 
 # Document Events
 # ---------------
@@ -98,7 +98,6 @@ app_license = "MIT"
 # 		"on_trash": "method"
 #	}
 # }
-
 # Scheduled Tasks
 # ---------------
 
