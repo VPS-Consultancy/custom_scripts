@@ -40,10 +40,7 @@ def send_sms(customer, invoice_no, due_date, amount):
     )
     mobile_number = "91" + mobile_number
     outstanding_amt = (get_dashboard_info("Customer", customer))[0]["total_unpaid"]
-    message = f"Nirmala Enterprises Alert. Dear Customer, \
-				Invoice No. {invoice_no} of Rs.{amount} \
-				was generated on {due_date}. \
-				Total outstanding amount as of today is {outstanding_amt} ."
+    message = f"Nirmala Enterprises Alert. Dear Customer, Invoice No. {invoice_no} of Rs.{amount} was generated on {due_date}. Total outstanding amount as of today is {outstanding_amt} ."
     result = sms_gateway(user, password, sender_id, mobile_number, message)
     if result.status_code == 200:
         res_json = json.loads(result.text)
