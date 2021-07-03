@@ -24,7 +24,7 @@
   },
   {
    "fieldname": "response",
-   "fieldtype": "Code",
+   "fieldtype": "Long Text",
    "label": "Response"
   },
   {
