@@ -24,7 +24,7 @@
   },
   {
    "fieldname": "response",
-   "fieldtype": "Data",
+   "fieldtype": "Code",
    "label": "Response"
   },
   {
