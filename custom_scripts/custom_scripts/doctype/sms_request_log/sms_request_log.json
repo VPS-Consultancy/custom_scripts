@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "creation": "2021-07-03 13:08:45.115599",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "api_method",
+  "request",
+  "response",
+  "reference_document",
+  "user"
+ ],
+ "fields": [
+  {
+   "fieldname": "api_method",
+   "fieldtype": "Data",
+   "label": "API Method"
+  },
+  {
+   "fieldname": "request",
+   "fieldtype": "Data",
+   "label": "Request"
+  },
+  {
+   "fieldname": "response",
+   "fieldtype": "Data",
+   "label": "Response"
+  },
+  {
+   "fieldname": "reference_document",
+   "fieldtype": "Data",
+   "label": "Reference Document"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-07-03 13:11:10.488825",
+ "modified_by": "Administrator",
+ "module": "Custom Scripts",
+ "name": "SMS Request Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
