@@ -558,8 +558,6 @@ class GrossProfitGenerator(object):
 
         self.si_list = self.cust_query(
             "Sales Invoice", conditions, sales_person_cols, sales_team_table
-        ) + self.cust_query(
-            "POS Invoice", conditions, sales_person_cols, sales_team_table
         )
 
     def cust_query(self, inv_name, conditions, sales_person_cols, sales_team_table):
