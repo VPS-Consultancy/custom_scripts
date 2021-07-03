@@ -15,33 +15,38 @@
   {
    "fieldname": "api_method",
    "fieldtype": "Data",
-   "label": "API Method"
+   "label": "API Method",
+   "read_only": 1
   },
   {
    "fieldname": "request",
    "fieldtype": "Long Text",
-   "label": "Request"
+   "label": "Request",
+   "read_only": 1
   },
   {
    "fieldname": "response",
    "fieldtype": "Long Text",
-   "label": "Response"
+   "label": "Response",
+   "read_only": 1
   },
   {
    "fieldname": "reference_document",
    "fieldtype": "Data",
-   "label": "Reference Document"
+   "label": "Reference Document",
+   "read_only": 1
   },
   {
    "fieldname": "user",
    "fieldtype": "Data",
-   "label": "User"
+   "label": "User",
+   "read_only": 1
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-07-03 15:11:10.488825",
+ "modified": "2021-07-03 17:11:10.488825",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "SMS Request Log",
