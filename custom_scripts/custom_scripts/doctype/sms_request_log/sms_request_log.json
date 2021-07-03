@@ -19,7 +19,7 @@
   },
   {
    "fieldname": "request",
-   "fieldtype": "Data",
+   "fieldtype": "Long Text",
    "label": "Request"
   },
   {
@@ -41,7 +41,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-07-03 14:11:10.488825",
+ "modified": "2021-07-03 15:11:10.488825",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "SMS Request Log",
