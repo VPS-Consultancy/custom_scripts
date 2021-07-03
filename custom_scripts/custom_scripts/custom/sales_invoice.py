@@ -38,6 +38,9 @@ def sms_gateway(user, password, sender_id, mobile_number, message, doc_name):
 	headers = {"Content-Type": "application/json"}
 	response = requests.request("GET", url, headers=headers)
 	request_params = f'User: {user}, Sender ID: {sender_id}, Mobile No: {mobile_number}, Message: {message}'
+	res = f'Status code: {response.status_code} - Response: {json.loads(response)}'
+	if response.status_code == 200:
+		res = f'Status code: {response.status_code}, Response - {json.loads(response.text)}'
 	create_log(doc_name, 'Send SMS', request_params, response)
 	return response
 
