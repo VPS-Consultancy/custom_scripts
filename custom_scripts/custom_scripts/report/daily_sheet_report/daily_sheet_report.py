@@ -81,7 +81,7 @@ def get_column():
 def get_data(filters):
 	data =[]
 	si_cash_type = frappe.db.sql("""select %s as inward_voucher_type, si.name as voucher_no,
-					si.rounded_total as in_amount, si.remarks as in_remarks,
+					sip.amount as in_amount, si.remarks as in_remarks,
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
