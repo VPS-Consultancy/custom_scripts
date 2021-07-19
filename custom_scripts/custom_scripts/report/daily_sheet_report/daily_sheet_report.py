@@ -84,7 +84,7 @@ def get_data(filters):
 					si.rounded_total as in_amount, si.remarks as in_remarks,
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
-					on sip.parent = pi.name
+					on sip.parent = si.name
 					where si.invoice_type = "Cash Invoice" and si.posting_date 
 					between %s and %s and si.docstatus = 1 and si.status = 'Paid'""",
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
