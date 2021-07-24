@@ -1,6 +1,5 @@
 frappe.ui.form.on("Sales Invoice", {
   refresh: function (frm) {
-    console.log("ertyuioigfdfghjklkjh gcfgyuiodichv");
     if (frm.doc.docstatus == 1) {
       frm.add_custom_button("Notify Customer", function () {
         frm.trigger("notify_customer");
