@@ -52,6 +52,7 @@ class ERPNextEmployeeAdvance(EmployeeAdvance):
 			add_salary.amount = self.paid_amount
 			add_salary.ref_doctype = 'Employee Advance'
 			add_salary.ref_docname = self.name
+			add_salary.payroll_date = self.posting_date
 			add_salary.overwrite_salary_structure_amount = 1
 			add_salary.save()
 			add_salary.submit()
