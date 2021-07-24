@@ -95,7 +95,7 @@ def get_data(filters):
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
 					where si.invoice_type = "Cash Invoice" and si.posting_date 
-					between %s and %s and si.docstatus = 1 and si.is_return = 1 and si.status = 'Return""",
+					between %s and %s and si.docstatus = 1 and si.is_return = 1 and si.status = 'Return'""",
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	pe_list_rc = frappe.db.sql('''select %s as inward_voucher_type, pe.name as voucher_no,
