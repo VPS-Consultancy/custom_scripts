@@ -90,7 +90,7 @@ def get_data(filters):
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	return_si = frappe.db.sql("""select %s as inward_voucher_type, si.name as voucher_no,
-					sip.amount * -1 as in_amount, si.remarks as in_remarks,
+					sip.amount as in_amount, si.remarks as in_remarks,
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
