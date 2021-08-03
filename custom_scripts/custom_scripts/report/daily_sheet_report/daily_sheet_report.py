@@ -115,7 +115,7 @@ def get_data(filters):
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	loan_disbursement_list = frappe.db.sql('''select %s as expense_type, ld.name as ex_voucher_no, 
-					ld.disbursement_amount as ex_amount,
+					ld.disbursed_amount as ex_amount,
 					l.mode_of_payment as ex_payment_mode
 					from `tabLoan Disbursement` ld join `tabLoan` l
 					on l.name = ld.against_loan
