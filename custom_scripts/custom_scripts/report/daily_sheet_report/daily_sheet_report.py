@@ -113,6 +113,15 @@ def get_data(filters):
 					where pe.payment_type = "Pay" and pe.posting_date  
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+
+	loan_disbursement_list = frappe.db.sql('''select %s as expense_type, ld.name as ex_voucher_no, 
+					ld.disbursement_amount as ex_amount,
+					l.mode_of_payment as ex_payment_mode
+					from `tabLoan Disbursement` ld join `tabLoan` l
+					on l.name = ld.against_loan
+					where ld.disbursement_date  
+					between %s and %s and ld.docstatus = 1''',
+					('Loan Disbursement',filters['cf_date'],filters['cf_date']),  as_dict = True)
 	
 	je_list = frappe.db.sql('''select  %s as expense_type, je.name as ex_voucher_no, 
 				je.total_debit as ex_amount, je.remark as ex_remarks, 'Cash' as ex_payment_mode
@@ -121,7 +130,7 @@ def get_data(filters):
 				and je.docstatus = 1''',
 				('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
-	data = si_cash_type + return_si + pe_list_rc + je_list + pe_list_pay
+	data = si_cash_type + return_si + pe_list_rc + je_list + pe_list_pay + loan_disbursement_list
 	
 	data += calculate_amount(data,filters)
 
