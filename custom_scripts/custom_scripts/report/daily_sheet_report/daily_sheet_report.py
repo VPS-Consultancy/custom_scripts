@@ -54,7 +54,7 @@ def get_column():
 		"label": "Voucher No",
 		"fieldname": "ex_voucher_no",
 		"fieldtype": "Dynamic Link",
-		"options": "inward_voucher_type",
+		"options": "expense_type",
 		"width": 200
 	},
 	{
