@@ -86,7 +86,7 @@ def get_data(filters):
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
 					where si.invoice_type = "Cash Invoice" and si.posting_date 
-					between %s and %s and si.docstatus = 1 and si.status = 'Paid' or si.status = 'Credit Note Issued'""",
+					between %s and %s and si.docstatus = 1 and (si.status = 'Paid' or si.status = 'Credit Note Issued') """,
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
 	return_si = frappe.db.sql("""select %s as inward_voucher_type, si.name as voucher_no,
