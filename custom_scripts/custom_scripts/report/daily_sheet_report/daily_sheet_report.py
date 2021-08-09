@@ -85,7 +85,7 @@ def get_data(filters):
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
-					where si.invoice_type = "Cash Invoice" and si.posting_date 
+					where si.invoice_type = "Cash Invoice" and sip.mode_of_payment !="Wire Transfer" and si.posting_date 
 					between %s and %s and si.docstatus = 1 and (si.status = 'Paid' or si.status = 'Credit Note Issued') """,
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -94,7 +94,7 @@ def get_data(filters):
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
-					where si.invoice_type = "Cash Return" and si.posting_date 
+					where si.invoice_type = "Cash Return" and sip.mode_of_payment !="Wire Transfer" and si.posting_date 
 					between %s and %s and si.docstatus = 1 and si.is_return = 1 and si.status = 'Return'""",
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -102,7 +102,7 @@ def get_data(filters):
 					pe.paid_amount as in_amount, pe.remarks as in_remarks,
 					pe.mode_of_payment as in_payment_mode
 					from `tabPayment Entry` pe 
-					where pe.payment_type = "Receive" and pe.posting_date 
+					where pe.payment_type = "Receive" and pe.mode_of_payment !="Wire Transfer" and pe.posting_date 
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -110,7 +110,7 @@ def get_data(filters):
 					pe.paid_amount as ex_amount, pe.remarks as ex_remarks,
 					pe.mode_of_payment as ex_payment_mode
 					from `tabPayment Entry` pe 
-					where pe.payment_type = "Pay" and pe.posting_date  
+					where pe.payment_type = "Pay" and pe.mode_of_payment !="Wire Transfer" and pe.posting_date  
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -119,7 +119,7 @@ def get_data(filters):
 					l.mode_of_payment as ex_payment_mode
 					from `tabLoan Disbursement` ld join `tabLoan` l
 					on l.name = ld.against_loan
-					where ld.disbursement_date  
+					where l.mode_of_payment !="Wire Transfer" and ld.disbursement_date  
 					between %s and %s and ld.docstatus = 1''',
 					('Loan Disbursement',filters['cf_date'],filters['cf_date']),  as_dict = True)
 	
