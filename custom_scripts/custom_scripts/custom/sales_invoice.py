@@ -34,7 +34,7 @@ def create_log(doc_name, api_method, request, response):
 	frappe.db.commit()
 
 def sms_gateway(user, password, sender_id, mobile_number, message, doc_name):
-	url = f"http://admagister.net/api/mt/SendSMS?user={user}&password={password}&senderid={sender_id}&channel=Trans&DCS=0&flashsms=0&number={mobile_number}&text={message}&route=6"
+	url = f"http://admagister.net/api/mt/SendSMS?user={user}&password={password}&channel=Trans&DCS=0&flashsms=0&number={mobile_number}&text={message}&route=6"
 	headers = {"Content-Type": "application/json"}
 	response = requests.request("GET", url, headers=headers)
 	request_params = f'User: {user}, Sender ID: {sender_id}, Mobile No: {mobile_number}, Message: {message}'

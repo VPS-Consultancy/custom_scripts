@@ -35,8 +35,7 @@
    "fieldname": "sender_id",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Sender ID",
-   "reqd": 1
+   "label": "Sender ID"
   },
   {
    "fieldname": "column_break_4",
