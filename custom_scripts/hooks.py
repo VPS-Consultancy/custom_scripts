@@ -83,9 +83,9 @@ app_license = "MIT"
 # ---------------
 # Override standard doctype classes
 
-override_doctype_class = {
-	"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance"
-}
+# override_doctype_class = {
+# 	"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance"
+# }
 
 # Document Events
 # ---------------
