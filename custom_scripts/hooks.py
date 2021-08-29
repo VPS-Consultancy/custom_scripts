@@ -84,7 +84,8 @@ doctype_js = {"Sales Invoice" : "custom_scripts/custom/js/sales_invoice.js"}
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance"
+	"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance",
+	"POS Invoice Merge Log": "custom_scripts.custom_scripts.custom.sales_invoice.ERPNextPOSInvoiceMergeLog"
 }
 
 # Document Events
