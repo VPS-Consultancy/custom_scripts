@@ -35,8 +35,7 @@
    "fieldname": "sender_id",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Sender ID",
-   "reqd": 1
+   "label": "Sender ID"
   },
   {
    "fieldname": "column_break_4",
@@ -46,7 +45,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-07-01 17:58:25.478534",
+ "modified": "2021-07-02 18:48:35.479534",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "Nirmala Settings",
