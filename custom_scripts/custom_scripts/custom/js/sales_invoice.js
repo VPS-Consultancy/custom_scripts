@@ -16,7 +16,7 @@ frappe.ui.form.on("Sales Invoice", {
       args: {
         customer: frm.doc.customer,
         invoice_no: frm.doc.name,
-        due_date: frm.doc.posting_date,
+        inv_date: frm.doc.posting_date,
         amount: frm.doc.rounded_total,
       },
       freeze: true,

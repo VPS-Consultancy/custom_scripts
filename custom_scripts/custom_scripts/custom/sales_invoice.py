@@ -46,7 +46,7 @@ def sms_gateway(user, password, sender_id, mobile_number, message, doc_name):
 	return response
 
 @frappe.whitelist()
-def send_sms(customer, invoice_no, due_date, amount):
+def send_sms(customer, invoice_no, inv_date, amount):
 	mobile_number = (get_mobile_number(customer))[0]["mobile_no"]
 	settings = frappe.get_single("Nirmala Settings")
 	user = settings.user
@@ -56,7 +56,8 @@ def send_sms(customer, invoice_no, due_date, amount):
 	)
 	mobile_number = "91" + mobile_number
 	outstanding_amt = (get_dashboard_info("Customer", customer))[0]["total_unpaid"]
-	message = f"Nirmala Alert. Dear Customer, Invoice.{invoice_no} of Rs.{amount} was generated.Due:{due_date}.Outstanding amt:Rs.{outstanding_amt}."
+	message = f"""Dear Customer, Invoice.{invoice_no} of Rs.{amount} was generated on {inv_date}. Outstanding amt: Rs.{outstanding_amt}. 
+				 Thanks. Have a great day! - Team Nirmala Home mart."""
 	result = sms_gateway(user, password, sender_id, mobile_number, message, invoice_no)
 	if result.status_code == 200:
 		res_json = json.loads(result.text)
