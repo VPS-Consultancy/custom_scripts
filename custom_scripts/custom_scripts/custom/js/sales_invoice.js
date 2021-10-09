@@ -1,6 +1,6 @@
 frappe.ui.form.on("Sales Invoice", {
   refresh: function (frm) {
-    if (frm.doc.docstatus == 1) {
+    if (frm.doc.docstatus == 1 && frm.doc.invoice_type == 'Credit Invoice') {
       frm.add_custom_button("Notify Customer", function () {
         frm.trigger("notify_customer");
       });
@@ -16,7 +16,7 @@ frappe.ui.form.on("Sales Invoice", {
       args: {
         customer: frm.doc.customer,
         invoice_no: frm.doc.name,
-        due_date: frm.doc.posting_date,
+        inv_date: frm.doc.posting_date,
         amount: frm.doc.rounded_total,
       },
       freeze: true,
