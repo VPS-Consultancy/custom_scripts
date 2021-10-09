@@ -1,6 +1,6 @@
 frappe.ui.form.on("Sales Invoice", {
   refresh: function (frm) {
-    if (frm.doc.docstatus == 1) {
+    if (frm.doc.docstatus == 1 && frm.doc.invoice_type == 'Credit Invoice') {
       frm.add_custom_button("Notify Customer", function () {
         frm.trigger("notify_customer");
       });
