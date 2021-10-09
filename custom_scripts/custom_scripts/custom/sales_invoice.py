@@ -37,10 +37,10 @@ def create_log(doc_name, api_method, request, response):
 	frappe.db.commit()
 
 def sms_gateway(user, password, sender_id, mobile_number, message, doc_name):
-	url = f"http://admagister.net/api/mt/SendSMS?user={user}&password={password}&channel=Trans&DCS=0&flashsms=0&number={mobile_number}&text={message}&route=6"
+	url = f"http://admagister.net/api/mt/SendSMS?user={user}&password={password}&senderid={sender_id}&channel=Trans&DCS=0&flashsms=0&number={mobile_number}&text={message}&route=37"
 	headers = {"Content-Type": "application/json"}
-	response = requests.request("POST", url, headers=headers)
-	request_params = f'User: {user}, Sender ID: {sender_id}, Mobile No: {mobile_number}, Message: {message}'
+	response = requests.request("GET", url, headers=headers)
+	request_params = f'User: {user}, Sender ID: {sender_id}, Mobile No: {mobile_number}, Message: {message} URL: {url}'
 	res = f'Status code: {response.status_code}, Response - {json.loads(response.text)}'
 	create_log(doc_name, 'Send SMS', request_params, res)
 	return response
@@ -56,8 +56,7 @@ def send_sms(customer, invoice_no, inv_date, amount):
 	)
 	mobile_number = "91" + mobile_number
 	outstanding_amt = (get_dashboard_info("Customer", customer))[0]["total_unpaid"]
-	message = f"""Dear Customer, Invoice.{invoice_no} of Rs.{amount} was generated on {inv_date}. Outstanding amt: Rs.{outstanding_amt}. 
-				 Thanks. Have a great day! - Team Nirmala Home mart."""
+	message = "Dear Customer, Invoice {} of Rs.{} was generated on {}. Outstanding amt: Rs.{} Thanks. Have a great day! - Team Nirmala Home mart".format(invoice_no, amount, inv_date, outstanding_amt)
 	result = sms_gateway(user, password, sender_id, mobile_number, message, invoice_no)
 	if result.status_code == 200:
 		res_json = json.loads(result.text)
