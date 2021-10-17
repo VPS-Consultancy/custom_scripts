@@ -4,6 +4,7 @@ import requests
 from erpnext.accounts.party import get_dashboard_info
 import erpnext
 from erpnext.accounts.doctype.pos_invoice_merge_log.pos_invoice_merge_log import POSInvoiceMergeLog
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.model.mapper import map_doc, map_child_doc
 from frappe.utils import flt
 
@@ -150,3 +151,12 @@ def update_item_wise_tax_detail(consolidate_tax_row, tax_row):
 			})
 
 	consolidate_tax_row.item_wise_tax_detail = json.dumps(consolidated_tax_detail, separators=(',', ':'))
+
+def make_custom_fields(update=True):
+	custom_fields={
+	'Sales Invoice Item': [
+		dict(fieldname='inches', label='Inches',
+			fieldtype='Float', insert_after='item_code',depends_on="eval:doc.item_group == \"Glass\"")
+	]
+	}
+	create_custom_fields(custom_fields, ignore_validate = frappe.flags.in_patch, update=update)
