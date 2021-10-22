@@ -64,7 +64,9 @@ if (item.weight) {
 			}
 			item.inches =  inches;
 	}
-item.qty = inches * 0.00694444;
+if (inches){
+	item.qty = inches * 0.00694444;
+}
  ```
 
 taxes_and_totals.py
@@ -101,7 +103,9 @@ if item.get('weight'):
 			else:
 				inches = key
 	item.inches =  inches
-item.qty = inches * 0.00694444
+
+if inches:
+	item.qty = inches * 0.00694444
 ```
 
 #### License
