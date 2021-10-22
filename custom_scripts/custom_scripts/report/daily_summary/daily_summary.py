@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 
 def execute(filters=None):
 	columns, data = [], []
@@ -30,7 +31,7 @@ def get_column():
 		"label": "Payment Mode",
 		"fieldname": "in_payment_mode",
 		"fieldtype": "Data",
-		"width": 100
+		"width": 150
 	},
 	{
 		"label": "Inward",
@@ -125,23 +126,49 @@ def get_data(filters):
 
 		if i['in_payment_mode']!='Cash':
 			i['ex_amount']=i['in_amount']
+	data += calculate_amount(data,filters)
 	return data
 
 
 def calculate_amount(entries,filters):
-	total_sales = 0
-	closing_cash = filters['cf_opening_balance'] if 'cf_opening_balance' in filters else 0
-	
-	total_sales = sum([entry['in_amount'] if 'in_amount' in entry else 0 for entry in entries if 'inward_voucher_type' in entry])
-	
-	closing_cash += sum([entry['in_amount'] if 'in_amount' in entry else 0 for entry in entries if ('inward_voucher_type' in entry and entry['in_payment_mode'] == 'Cash')]) - \
-	sum([entry['ex_amount'] if 'ex_amount' in entry else 0 for entry in entries if ('inward_voucher_type' in entry and entry['in_payment_mode'] == 'Cash')])
+	total = 0
+	final_data  = []
+	cl = abs(sum([entry['in_amount'] if 'in_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]) - sum([entry['ex_amount'] if 'ex_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]))
+	total_in_amt = sum([entry['in_amount'] if 'in_amount' in entry else 0 for entry in entries])
+	total_ex_amt = sum([entry['ex_amount'] if 'ex_amount' in entry else 0 for entry in entries])
+	opening = filters['cf_opening_balance'] if 'cf_opening_balance' in filters else 0
+	total = opening + total_in_amt
+	final_data += [{'in_amount':total_in_amt, 'ex_amount': total_ex_amt}, {'in_payment_mode':frappe.bold('Opening'), 'in_amount':opening}, {'in_payment_mode':frappe.bold('Total'), 'in_amount': total, 'ex_amount': total_ex_amt},
+	{'in_payment_mode':frappe.bold('Less Expenses'), 'in_amount': -total_ex_amt},
+	{'in_payment_mode':frappe.bold('Cash In Hand'), 'in_amount': total-total_ex_amt}
+	]
 
-	if frappe.db.exists('Daily Balance',{'date':filters['cf_date']}):
-		frappe.db.set_value('Daily Balance',{'date':filters['cf_date']},'amount',closing_cash)
-	else:
-		frappe.get_doc({'doctype':'Daily Balance', 'date':filters['cf_date'],'amount':closing_cash}).insert()
+	is_denomination_exist = frappe.db.get_value('Cash Denomination', {'date': filters['cf_date']})
+	if is_denomination_exist:
+		closing_cash = frappe.db.get_value('Cash Denomination', is_denomination_exist, 'total_amount')
+		denomination_list = frappe.get_list('Cash Denominations Details', {'parent': is_denomination_exist}, ['denomination','count','total'])
+		ordered_list = [['2000', 0, 0], ['500', 0, 0], ['200', 0, 0], ['100', 0, 0], ['50', 0, 0], ['20', 0, 0], ['10', 0, 0]]
+		for row in denomination_list[::-1]:
+			for row1 in ordered_list:
+				if row.get('denomination') == row1[0]:
+					row1[1] = row.get('count') if row.count else 0
+					row1[2] = row.get('total') if row.total else 0
+		if closing_cash:
+			final_data += [{'in_payment_mode':frappe.bold('Cash Short'), 'in_amount': (total-total_ex_amt) - (closing_cash)}]
+		final_data += [{'voucher_no':'', 'in_payment_mode':'', 'in_amount':''}]
+		for row in ordered_list:
+			final_data += [{'voucher_no':frappe.bold(row[0]), 'in_payment_mode':row[1], 'in_amount':row[2]}]
+
+		final_data += [{'voucher_no':'', 'in_payment_mode':'', 'in_amount':closing_cash}]
+		if closing_cash:
+			if frappe.db.exists('Daily Summary Balance',{'date':filters['cf_date']}):
+				frappe.db.set_value('Daily Summary Balance',{'date':filters['cf_date']},'amount',closing_cash)
+			else:
+				frappe.get_doc({'doctype':'Daily Summary Balance', 'date':filters['cf_date'],'amount':closing_cash}).insert()
+			final_data += [
+			{'inward_voucher_type':frappe.bold('**Closing Cash**'), 'voucher_no': frappe.bold(closing_cash)},
+			{'inward_voucher_type':frappe.bold('**Total Sales** '), 'voucher_no': frappe.bold(total_in_amt)}]
 	
 	frappe.db.commit()
 	
-	return [{'in_payment_mode':frappe.bold('Closing Cash'),'ex_amount':closing_cash},{'in_payment_mode':frappe.bold('Total Sales'),'ex_amount':total_sales}]
+	return final_data
