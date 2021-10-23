@@ -8,7 +8,8 @@
  "field_order": [
   "date",
   "cash_denominations_details",
-  "total_amount"
+  "total_amount",
+  "amended_from"
  ],
  "fields": [
   {
@@ -32,11 +33,21 @@
    "in_list_view": 1,
    "label": "Total Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Cash Denomination",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2021-10-22 20:25:29.974819",
+ "modified": "2021-10-23 19:30:32.476479",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "Cash Denomination",
