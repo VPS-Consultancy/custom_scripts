@@ -1,0 +1,53 @@
+<style>
+	@media screen {
+		.print-format {
+			width: 100mm;
+			padding:5px;
+		}
+	}
+
+</style>
+<div class="page-break">
+<div id="footer-html">
+{% for n in range(0, (doc.no_of_labels_required)|int, 2) %}
+<section style="height: 25mm;
+  width:100mm;" >
+<div class="row">
+    <div class="column" style="float: left;">
+<div class="dashboard-section" style="padding-left:13px;">
+  <div class="barcode-label-container">
+   <div id="barcode-label" class="barcode-label">
+      <div class="barcode-header" style="margin-top:6%">
+        <span class="barcode-strong">{{doc.item_attribute}}</span>
+      </div>
+       <div class="barcode-text barcode-strong">{{ doc.item_code }} - {{ doc.item_name }}</div>
+      <div class="barcode-area2">{{ doc.barcode }}</div>
+      <div class="barcode-foot barcode-strong barcode-rotated">
+        {{ frappe.utils.today().split('-')[1]}}/{{ frappe.utils.today().split('-')[0][2::]}}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+  <div class="column">
+<div class="dashboard-section" style="padding-left:5px;margin-left:0px">
+  <div class="barcode-label-container">
+   <div id="barcode-label" class="barcode-label">
+      <div class="barcode-header" style="margin-top:6%">
+        <span class="barcode-strong">{{doc.item_attribute}}</span>
+      </div>
+       <div class="barcode-text barcode-strong">{{ doc.item_code }} - {{ doc.item_name }}</div>
+      <div class="barcode-area2">{{ doc.barcode }}</div>
+      <div class="barcode-foot barcode-strong barcode-rotated">
+        {{ frappe.utils.today().split('-')[1]}}/{{ frappe.utils.today().split('-')[0][2::]}}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</section>
+<div style="padding:2px"></div>
+{% endfor %}
+</div>
+</div>
