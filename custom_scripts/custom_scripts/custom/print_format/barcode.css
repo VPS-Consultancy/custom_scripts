@@ -1,0 +1,56 @@
+.dashboard-section {
+    display: flex;
+    flex-flow: row nowrap;
+    height: 25mm;
+    width:50mm;
+  }
+  .barcode-label-container {
+    width: fit-content;
+    overflow: hidden;
+  }
+  .barcode-label {
+    color: #000000;
+    box-sizing: border-box;
+    padding: 1.5mm;
+    display: grid;
+    grid-template-columns: 1fr 6mm;
+    grid-template-rows: 4mm 1fr 17.5mm;
+    grid-template-areas: 'header footer' 'text footer' 'barcode footer';
+    /*line-height: 2.5;*/
+    text-align: center;
+  }
+  .barcode-rotated {
+    line-height: 6mm;
+    transform: translate(calc(-12.5mm), 0) rotate(-90deg);
+    transform-origin: center center;
+    height: 6mm;
+    width: calc(31mm);
+  }
+  .barcode-header {
+    grid-area: header;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-family: Roboto;
+    align-self: center;
+  }
+  .barcode-text {
+      grid-area: text;
+    align-self: center;
+    font-family: Roboto;
+    font-size:9px;
+    margin-top:5px;
+  }
+  .barcode-area2 {
+    grid-area: barcode;
+    align-self: center;
+     margin-bottom:25px;
+  }
+  .barcode-foot {
+    grid-area: footer;
+    font-size: 1.0em;
+    align-self: center;
+    margin-bottom:7px;
+  }
+  .barcode-strong {
+    font-weight: bold;
+  }
