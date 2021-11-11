@@ -13,20 +13,20 @@ taxes_and_totals.js
 ```
 var inches = 0;
 if (item.height) {
-		const object = {'Regular Moving Glass': {3: [0,3], 6:[3,6], 12:[6,12], 15:[12,15],
-				18:[15,18], 24:[18,24],30:[24,30], 36:[30,36], 42:[36,42], 48:[42,48], 60:[48,60],
-				72:[60,72], 84:[72, 84], 96:[84, 96]
-				}, 'Non-Regular Moving Glass': {12:[0,12], 18:[12,18], 24:[18,24], 36:[24,36], 48:[36,48], 60:[48,60], 72:							[60,72]}};
+	const object = {'Regular Moving Glass': {3: [0,3], 6:[3,6], 12:[6,12], 15:[12,15],
+		18:[15,18], 24:[18,24],30:[24,30], 36:[30,36], 42:[36,42], 48:[42,48], 60:[48,60],
+		72:[60,72], 84:[72, 84], 96:[84, 96]
+		}, 'Non-Regular Moving Glass': {12:[0,12], 18:[12,18], 24:[18,24], 36:[24,36], 48:[36,48], 60:[48,60], 72:[60,72]}};
 		for (const [key, value] of Object.entries(object[item.item_group])) {
 			if(item.height>value[0] && item.height<=value[1]){
 				if (item.inches!==0)
 				{
 					if(item.weight!==0){
-						for (const [key1, value1] of Object.entries(object)) {
+						for (const [key1, value1] of Object.entries(object[item.item_group])) {
 							if(item.weight>value1[0] && item.weight<=value1[1]){
 								inches = key * key1;
 							}
-
+			
 						}
 					}
 				}
@@ -39,20 +39,20 @@ if (item.height) {
 		item.inches =  inches;
 }
 if (item.weight) {
-		const object = {'Regular Moving Glass': {3: [0,3], 6:[3,6], 12:[6,12], 15:[12,15],
-				18:[15,18], 24:[18,24],30:[24,30], 36:[30,36], 42:[36,42], 48:[42,48], 60:[48,60],
-				72:[60,72], 84:[72, 84], 96:[84, 96]
-				}, 'Non-Regular Moving Glass': {12:[0,12], 18:[12,18], 24:[18,24], 36:[24,36], 48:[36,48], 60:[48,60], 72:							[60,72]}};
+	const object = {'Regular Moving Glass': {3: [0,3], 6:[3,6], 12:[6,12], 15:[12,15],
+		18:[15,18], 24:[18,24],30:[24,30], 36:[30,36], 42:[36,42], 48:[42,48], 60:[48,60],
+		72:[60,72], 84:[72, 84], 96:[84, 96]
+		}, 'Non-Regular Moving Glass': {12:[0,12], 18:[12,18], 24:[18,24], 36:[24,36], 48:[36,48], 60:[48,60], 72:[60,72]}};
 			for (const [key2, value2] of Object.entries(object[item.item_group])) {
 				if(item.weight>value2[0] && item.weight<=value2[1]){
 					if (item.inches!==0)
 					{
 						if(item.height!==0){
-							for (const [key3, value3] of Object.entries(object)) {
+							for (const [key3, value3] of Object.entries(object[item.item_group])) {
 								if(item.height>value3[0] && item.height<=value3[1]){
 									inches = key2 * key3;
 								}
-
+				
 							}
 						}
 					}
