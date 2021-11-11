@@ -65,7 +65,7 @@ if (item.weight) {
 			item.inches =  inches;
 	}
 if (inches){
-	item.qty = inches * 0.00694444;
+	item.qty = inches * 0.00694444 * item.no_of_pieces;
 }
  ```
 
@@ -111,7 +111,7 @@ if item.get('weight'):
 	item.inches =  inches
 
 if inches:
-	item.qty = inches * 0.00694444
+	item.qty = inches * 0.00694444 * item.no_of_pieces
 ```
 
 #### License
