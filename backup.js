@@ -1,5 +1,12 @@
 frappe.ui.form.on("Sales Invoice Item",
 {
+    no_of_pieces: function(frm, cdt, cdn) {
+		const d = locals[cdt][cdn];
+		var inches = 0;
+		if (d.no_of_pieces) {
+			frappe.model.set_value(cdt, cdn, 'qty', d.inches * 0.00694444 * d.no_of_pieces);
+	}
+	},
     height: function(frm, cdt, cdn) {
 		const d = locals[cdt][cdn];
 		var inches = 0;
@@ -34,7 +41,7 @@ frappe.ui.form.on("Sales Invoice Item",
 
 			}
 			frappe.model.set_value(cdt, cdn, 'inches', inches);
-			frappe.model.set_value(cdt, cdn, 'qty', inches * 0.00694444);
+			frappe.model.set_value(cdt, cdn, 'qty', inches * 0.00694444 * d.no_of_pieces);
 			
 	}
 	},
