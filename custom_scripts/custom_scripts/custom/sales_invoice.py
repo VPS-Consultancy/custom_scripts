@@ -155,13 +155,13 @@ def update_item_wise_tax_detail(consolidate_tax_row, tax_row):
 def make_custom_fields(update=True):
 	custom_fields={
 	'Sales Invoice Item': [
-		dict(fieldname='inches', label='Inches',
+		dict(fieldname='inches', label='Inches', default = 0,
 			fieldtype='Float', insert_after='item_code',read_only = 1, depends_on="eval: doc.item_group == \"Non-Regular Moving Glass\" || doc.item_group == \"Regular Moving Glass\""),
-		dict(fieldname='no_of_pieces', label='No of Pieces', default = 0,
+		dict(fieldname='no_of_pieces', label='No of Pieces', default=1,
 			fieldtype='Float', insert_after='inches', depends_on="eval: doc.item_group == \"Non-Regular Moving Glass\" || doc.item_group == \"Regular Moving Glass\""),
-		dict(fieldname='height', label='Height',
+		dict(fieldname='height', label='Height', default = 0,
 			fieldtype='Float', insert_after='no_of_pieces',depends_on="eval: doc.item_group == \"Non-Regular Moving Glass\" || doc.item_group == \"Regular Moving Glass\""),
-		dict(fieldname='weight', label='Weight',
+		dict(fieldname='weight', label='Weight', default = 0,
 			fieldtype='Float', insert_after='height',depends_on="eval: doc.item_group == \"Non-Regular Moving Glass\" || doc.item_group == \"Regular Moving Glass\"")
 	]
 	}
