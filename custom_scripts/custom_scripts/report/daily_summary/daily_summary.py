@@ -74,7 +74,7 @@ def get_data(filters):
 					sip.mode_of_payment as in_payment_mode, si.customer as party, %s as party_type
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
-					where si.invoice_type = "Cash Invoice" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash") and si.posting_date 
+					where si.invoice_type = "Cash Invoice" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash" or sip.mode_of_payment = "Cheque") and si.posting_date 
 					between %s and %s and si.docstatus = 1 and (si.status = 'Paid' or si.status = 'Credit Note Issued') """,
 					('Sales Invoice','Customer', filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -83,7 +83,7 @@ def get_data(filters):
 					sip.mode_of_payment as in_payment_mode, si.customer as party, %s as party_type
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
-					where si.invoice_type = "Cash Return" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash") and si.posting_date 
+					where si.invoice_type = "Cash Return" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash" or sip.mode_of_payment = "Cheque") and si.posting_date 
 					between %s and %s and si.docstatus = 1 and si.is_return = 1 and si.status = 'Return'""",
 					('Sales Invoice','Customer',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -91,7 +91,7 @@ def get_data(filters):
 					pe.paid_amount as in_amount, pe.remarks as in_remarks,
 					pe.mode_of_payment as in_payment_mode, pe.party_type, pe.party
 					from `tabPayment Entry` pe 
-					where pe.payment_type = "Receive" and (pe.mode_of_payment ="Wire Transfer" or pe.mode_of_payment ="Credit Card" or pe.mode_of_payment ="Google Pay" or pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping") and pe.posting_date 
+					where pe.payment_type = "Receive" and (pe.mode_of_payment ="Wire Transfer" or pe.mode_of_payment ="Credit Card" or pe.mode_of_payment ="Google Pay" or pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping" or pe.mode_of_payment = "Cheque") and pe.posting_date 
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
@@ -99,7 +99,7 @@ def get_data(filters):
 					pe.paid_amount as ex_amount, pe.remarks as in_remarks,
 					pe.mode_of_payment as in_payment_mode, pe.party_type, pe.party
 					from `tabPayment Entry` pe 
-					where pe.payment_type = "Pay" and pe.party_type = 'Customer' and (pe.mode_of_payment ="Wire Transfer" or pe.mode_of_payment ="Credit Card" or pe.mode_of_payment ="Google Pay" or pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping") and pe.posting_date  
+					where pe.payment_type = "Pay" and pe.party_type = 'Customer' and (pe.mode_of_payment ="Wire Transfer" or pe.mode_of_payment ="Credit Card" or pe.mode_of_payment ="Google Pay" or pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping" or pe.mode_of_payment = "Cheque") and pe.posting_date  
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 	
@@ -107,7 +107,7 @@ def get_data(filters):
 					pe.paid_amount as ex_amount, pe.remarks as in_remarks,
 					pe.mode_of_payment as in_payment_mode, pe.party_type, pe.party
 					from `tabPayment Entry` pe 
-					where pe.payment_type = "Pay" and (pe.party_type = 'Supplier' or pe.party_type = 'Employee') and (pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping") and pe.posting_date  
+					where pe.payment_type = "Pay" and (pe.party_type = 'Supplier' or pe.party_type = 'Employee') and (pe.mode_of_payment ="Cash" or pe.mode_of_payment = "Card Swiping" or pe.mode_of_payment = "Cheque") and pe.posting_date  
 					between %s and %s and pe.docstatus = 1''',
 					('Payment Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
