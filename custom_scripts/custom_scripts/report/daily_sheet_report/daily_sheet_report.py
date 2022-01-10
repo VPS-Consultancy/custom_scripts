@@ -85,7 +85,7 @@ def get_data(filters):
 					sip.mode_of_payment as in_payment_mode
 					from `tabSales Invoice` si join `tabSales Invoice Payment` sip
 					on sip.parent = si.name
-					where si.invoice_type = "Cash Invoice" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash" or or sip.mode_of_payment = "Cheque") and si.posting_date 
+					where si.invoice_type = "Cash Invoice" and (sip.mode_of_payment ="Wire Transfer" or sip.mode_of_payment ="Credit Card" or sip.mode_of_payment ="Google Pay" or sip.mode_of_payment ="Cash" or sip.mode_of_payment = "Cheque") and si.posting_date 
 					between %s and %s and si.docstatus = 1 and (si.status = 'Paid' or si.status = 'Credit Note Issued') """,
 					('Sales Invoice',filters['cf_date'],filters['cf_date']),  as_dict = True)
 
