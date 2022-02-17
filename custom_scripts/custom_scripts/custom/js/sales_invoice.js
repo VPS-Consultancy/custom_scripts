@@ -11,6 +11,7 @@ frappe.ui.form.on("Sales Invoice", {
     frm.trigger("notify_customer");
   },
   notify_customer: function (frm) {
+    if (frm.doc.invoice_type == 'Credit Invoice'){
     frappe.call({
       method: "custom_scripts.custom_scripts.custom.sales_invoice.send_sms",
       args: {
@@ -34,5 +35,5 @@ frappe.ui.form.on("Sales Invoice", {
         }
       },
     });
-  },
+  }}
 });
