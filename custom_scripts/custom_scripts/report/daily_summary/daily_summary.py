@@ -193,7 +193,29 @@ def get_data(filters):
 				if row['party']:
 					i['party'] = row['party']
 
-	data += calculate_amount(data,filters)
+	totals = calculate_amount(data,filters)
+	for i in je_list:
+		if not 'in_amount' in i:
+			i['in_amount'] = 0
+		if not 'ex_amount' in i:
+			i['ex_amount'] = 0
+		if 'in_amount' in i and i['in_amount'] and i['in_amount']<0 :
+			i['ex_amount']=abs(i['in_amount'])
+			i['in_amount']=0
+
+		if i['in_payment_mode']!='Cash':
+			i['ex_amount']=i['in_amount']
+		
+		if i['inward_voucher_type'] == 'Journal Entry':
+			jea_list = frappe.db.get_list('Journal Entry Account', {'parent': i['voucher_no']},['party_type', 'party'])
+			for row in jea_list:
+				if row['party_type']:
+					i['party_type'] = row['party_type']
+				if row['party']:
+					i['party'] = row['party']
+	data += je_list
+	data += totals
+
 	return data
 
 
