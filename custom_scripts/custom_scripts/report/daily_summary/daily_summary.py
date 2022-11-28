@@ -172,7 +172,7 @@ def get_data(filters):
 	# 		group by je.name
 
 	# 				""",  as_dict = True)
-	data = si_cash_type + return_si + pe_list_rc + je_list + cust_pe_list_pay + common_pe_list_pay + loan_disbursement_list
+	data = si_cash_type + return_si + pe_list_rc  + cust_pe_list_pay + common_pe_list_pay + loan_disbursement_list
 	for i in data:
 		if not 'in_amount' in i:
 			i['in_amount'] = 0
