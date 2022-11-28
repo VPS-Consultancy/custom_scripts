@@ -9,7 +9,9 @@
   "user",
   "sender_id",
   "column_break_4",
-  "password"
+  "password",
+  "daily_summary_section",
+  "cash_account"
  ],
  "fields": [
   {
@@ -40,12 +42,23 @@
   {
    "fieldname": "column_break_4",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "daily_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Daily Summary"
+  },
+  {
+   "fieldname": "cash_account",
+   "fieldtype": "Link",
+   "label": "Cash Account",
+   "options": "Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-07-02 18:48:35.479534",
+ "modified": "2022-11-28 12:24:22.155737",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "Nirmala Settings",

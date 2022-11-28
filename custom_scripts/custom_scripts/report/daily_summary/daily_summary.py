@@ -119,14 +119,59 @@ def get_data(filters):
 					where l.mode_of_payment ="Cash" and ld.disbursement_date  
 					between %s and %s and ld.docstatus = 1''',
 					('Loan Disbursement',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	je_list = []
+	journal_entries = frappe.get_list('Journal Entry',{'voucher_type':'Cash Entry','docstatus':1,
+						"posting_date": ["between", (filters['cf_date'],filters['cf_date'])],})
 	
-	je_list = frappe.db.sql('''select  %s as inward_voucher_type, je.name as voucher_no, 
-				je.total_debit as ex_amount, je.remark as in_remarks, 'Cash' as in_payment_mode
-				from `tabJournal Entry` je
-				where je.voucher_type = 'Cash Entry' and je.posting_date  between %s and %s 
-				and je.docstatus = 1''',
-				('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	cash_account = frappe.db.get_single_value('Nirmala Settings', 'cash_account')
+	for je in journal_entries:
+		doc = frappe.get_doc('Journal Entry',je['name'])
+		for row in doc.accounts:
+			if row.account == cash_account:
+				if row.debit_in_account_currency:
+					je_list.append({
+						'inward_voucher_type': 'Journal Entry',
+						'voucher_no' : doc.name,
+						'in_amount' : row.debit_in_account_currency,
+						'in_remarks' : doc.remark,
+						'in_payment_mode' : 'Cash'
+					})
+				if row.credit_in_account_currency:
+					je_list.append({
+						'inward_voucher_type': 'Journal Entry',
+						'voucher_no' : doc.name,
+						'ex_amount' : row.credit_in_account_currency,
+						'in_remarks' : doc.remark,
+						'in_payment_mode' : 'Cash'
+					})			
 
+	# je_list = frappe.db.sql('''select  %s as inward_voucher_type, je.name as voucher_no, 
+	# 			je.total_debit as in_amount, je.remark as in_remarks, 'Cash' as in_payment_mode
+	# 			from `tabJournal Entry` je
+	# 			where je.voucher_type = 'Cash Entry' and je.posting_date  between %s and %s 
+	# 			and je.docstatus = 1''',
+	# 			('Journal Entry',filters['cf_date'],filters['cf_date']),  as_dict = True)
+	# je_list = frappe.db.sql(f"""
+
+	# 		select 
+	# 		'Journal Entry' as inward_voucher_type, 
+	# 		je.name as voucher_no, 
+	# 		jea.debit_in_account_currency as in_amount,
+	# 		jea.credit_in_account_currency as ex_amount,
+	# 		je.remark as in_remarks,
+	# 		jea.account as acc,
+	# 		'Cash' as in_payment_mode 
+	# 		from 
+	# 		`tabJournal Entry` je 
+	# 		left join `tabJournal Entry Account` jea on je.name = jea.parent and jea.account  LIKE "%Cash In Hand%"
+	# 		where 
+	# 		je.voucher_type = 'Cash Entry' 
+	# 		and je.posting_date between '{filters['cf_date']}'
+	# 		and '{filters['cf_date']}' 
+	# 		and je.docstatus = 1
+	# 		group by je.name
+
+	# 				""",  as_dict = True)
 	data = si_cash_type + return_si + pe_list_rc + je_list + cust_pe_list_pay + common_pe_list_pay + loan_disbursement_list
 	for i in data:
 		if not 'in_amount' in i:
@@ -153,6 +198,32 @@ def get_data(filters):
 
 
 def calculate_amount(entries,filters):
+	# je_list_total = frappe.db.sql(f"""
+
+    #     select 
+    #       'Journal Entry' as inward_voucher_type, 
+    #       je.name as voucher_no,
+    #       sum(jea.debit_in_account_currency) as ex_amount,
+    #       sum(jea.credit_in_account_currency) as in_amount,
+    #       je.remark as in_remarks,
+    #       jea.account as acc,
+    #       'Cash' as in_payment_mode 
+    #     from 
+    #       `tabJournal Entry` je 
+    #      left join `tabJournal Entry Account` jea on je.name = jea.parent and jea.account  LIKE "%Cash In Hand%"
+    #     where 
+    #       je.voucher_type = 'Cash Entry' 
+    #       and je.posting_date between '2022-11-14'
+    #       and '2022-11-14' 
+    #       and je.docstatus = 1
+    #             """,  as_dict = True)
+
+	# jet = 0
+	# if je_list_total[0]['ex_amount'] != 0:
+	# 	jet= je_list_total[0]['ex_amount']
+
+#  -  jet
+
 	total = 0
 	final_data  = []
 	cl = abs(sum([entry['in_amount'] if 'in_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]) - sum([entry['ex_amount'] if 'ex_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]))
