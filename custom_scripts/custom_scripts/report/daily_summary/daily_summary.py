@@ -172,7 +172,7 @@ def get_data(filters):
 	# 		group by je.name
 
 	# 				""",  as_dict = True)
-	data = si_cash_type + return_si + pe_list_rc  + cust_pe_list_pay + common_pe_list_pay + loan_disbursement_list
+	data = si_cash_type + return_si + pe_list_rc  + je_list + cust_pe_list_pay + common_pe_list_pay + loan_disbursement_list
 	for i in data:
 		if not 'in_amount' in i:
 			i['in_amount'] = 0
@@ -194,26 +194,6 @@ def get_data(filters):
 					i['party'] = row['party']
 
 	totals = calculate_amount(data,filters)
-	for i in je_list:
-		if not 'in_amount' in i:
-			i['in_amount'] = 0
-		if not 'ex_amount' in i:
-			i['ex_amount'] = 0
-		if 'in_amount' in i and i['in_amount'] and i['in_amount']<0 :
-			i['ex_amount']=abs(i['in_amount'])
-			i['in_amount']=0
-
-		if i['in_payment_mode']!='Cash':
-			i['ex_amount']=i['in_amount']
-		
-		if i['inward_voucher_type'] == 'Journal Entry':
-			jea_list = frappe.db.get_list('Journal Entry Account', {'parent': i['voucher_no']},['party_type', 'party'])
-			for row in jea_list:
-				if row['party_type']:
-					i['party_type'] = row['party_type']
-				if row['party']:
-					i['party'] = row['party']
-	data += je_list
 	data += totals
 
 	return data
@@ -250,6 +230,7 @@ def calculate_amount(entries,filters):
 	final_data  = []
 	cl = abs(sum([entry['in_amount'] if 'in_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]) - sum([entry['ex_amount'] if 'ex_amount' in entry and entry['in_payment_mode'] == 'Cash'  else 0 for entry in entries]))
 	total_in_amt = sum([entry['in_amount'] if 'in_amount' in entry else 0 for entry in entries])
+	total_sales = sum([entry['in_amount'] if 'in_amount' in entry and entry['inward_voucher_type']!='Journal Entry' else 0 for entry in entries])
 	total_ex_amt = sum([entry['ex_amount'] if 'ex_amount' in entry else 0 for entry in entries])
 	opening = filters['cf_opening_balance'] if 'cf_opening_balance' in filters else 0
 	total = opening + total_in_amt
@@ -282,7 +263,7 @@ def calculate_amount(entries,filters):
 				frappe.get_doc({'doctype':'Daily Summary Balance', 'date':filters['cf_date'],'amount':closing_cash}).insert()
 			final_data += [
 			{'inward_voucher_type':frappe.bold('**Closing Cash**'), 'voucher_no': frappe.bold(closing_cash)},
-			{'inward_voucher_type':frappe.bold('**Total Sales** '), 'voucher_no': frappe.bold(total_in_amt)}]
+			{'inward_voucher_type':frappe.bold('**Total Sales** '), 'voucher_no': frappe.bold(total_sales)}]
 	
 	frappe.db.commit()
 	
