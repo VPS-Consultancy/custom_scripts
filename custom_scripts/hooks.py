@@ -33,7 +33,11 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Sales Invoice" : "custom_scripts/custom/js/sales_invoice.js"}
+doctype_js = {
+	"Sales Invoice" : "custom_scripts/custom/js/sales_invoice.js",
+	"Sales Order" : "custom_scripts/custom/js/sales_order.js",
+	"Purchase Order" : "custom_scripts/custom/js/purchase_order.js"
+	}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -91,13 +95,16 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	# "*": {
+	# 	"on_update": "method",
+	# 	"on_cancel": "method",
+	# 	"on_trash": "method"
+	# }
+	"Journal Entry":{
+		"on_submit": "custom_scripts.custom_scripts.custom.journal_entry_custom.make_nhm_paid"
+	}
+}
 # Scheduled Tasks
 # ---------------
 
