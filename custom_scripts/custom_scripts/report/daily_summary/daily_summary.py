@@ -186,7 +186,7 @@ def get_data(filters):
 			i['ex_amount']=i['in_amount']
 		
 		if i['inward_voucher_type'] == 'Journal Entry':
-			jea_list = frappe.db.get_list('Journal Entry Account', {'parent': i['voucher_no']},['party_type', 'party'])
+			jea_list = frappe.db.get_list('Journal Entry Account', {'parent': i['voucher_no']},['party_type', 'party'], ignore_permissions=True)
 			for row in jea_list:
 				if row['party_type']:
 					i['party_type'] = row['party_type']
@@ -242,7 +242,7 @@ def calculate_amount(entries,filters):
 	is_denomination_exist = frappe.db.get_value('Cash Denomination', {'date': filters['cf_date'], 'docstatus': 1})
 	if is_denomination_exist:
 		closing_cash = frappe.db.get_value('Cash Denomination', is_denomination_exist, 'total_amount')
-		denomination_list = frappe.get_list('Cash Denominations Details', {'parent': is_denomination_exist}, ['denomination','count','total'])
+		denomination_list = frappe.get_list('Cash Denominations Details', {'parent': is_denomination_exist}, ['denomination','count','total'], ignore_permissions=True)
 		ordered_list = [['2000', 0, 0], ['500', 0, 0], ['200', 0, 0], ['100', 0, 0], ['50', 0, 0], ['20', 0, 0], ['10', 0, 0]]
 		for row in denomination_list[::-1]:
 			for row1 in ordered_list:

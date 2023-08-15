@@ -154,6 +154,13 @@ def execute(filters=None):
     if filters.group_by == 'Item Code':
         for src in gross_profit_data.grouped_data:
             custom_filters = {'company': filters['company'], 'from_date': filters['from_date'], 'to_date': filters['to_date']}
+            doc = frappe.get_doc({
+                'doctype': 'reprort log',
+                'src': str(src),
+                "filter":f""" {custom_filters} --- {[src['item_code']]} """
+
+            })
+            doc.insert()
             res = get_stock_ledger_entries(custom_filters, [src['item_code']])
             stock_ledger_res = fetch_stock_ledger(custom_filters, [src['item_code']])
             stock_bal_res = get_item_warehouse_map(custom_filters, stock_ledger_res)
@@ -433,7 +440,7 @@ class GrossProfitGenerator(object):
 
         self.returned_invoices = frappe._dict()
         for inv in returned_invoices:
-            inv.base_amount = get_itewise_tax_rate(inv.total_taxes_and_charges, inv.total, inv.base_amount)
+            inv.base_amount = get_itemwise_tax_rate(inv.total_taxes_and_charges, inv.total, inv.base_amount)
             self.returned_invoices.setdefault(
                 inv.return_against, frappe._dict()
             ).setdefault(inv.item_code, []).append(inv)
@@ -596,7 +603,7 @@ class GrossProfitGenerator(object):
             as_dict=1,
         )
         for row in invoice_list:
-            row.base_amount = get_itewise_tax_rate(row.total_taxes_and_charges, row.total, row.base_amount)
+            row.base_amount = get_itemwise_tax_rate(row.total_taxes_and_charges, row.total, row.base_amount)
         return invoice_list
 
     def load_stock_ledger_entries(self):
@@ -637,5 +644,10 @@ class GrossProfitGenerator(object):
 			where is_stock_item=0"""
         )
 
-def get_itewise_tax_rate(total_tax_amount, total_amount, item_amount):
-    return item_amount + flt((item_amount * (total_tax_amount / total_amount)), 2)
+def get_itemwise_tax_rate(total_tax_amount, total_amount, item_amount):
+    if total_tax_amount != 0 and total_amount !=0:
+        return item_amount + flt((item_amount * (total_tax_amount / total_amount)), 2)
+    elif total_tax_amount == 0 and total_amount !=0:
+        return item_amount + flt((item_amount * ( total_amount)), 2)
+    elif total_tax_amount != 0 and total_amount ==0:
+        return item_amount + flt((item_amount * ( total_tax_amount)), 2)

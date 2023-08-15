@@ -89,7 +89,8 @@ doctype_js = {
 
 override_doctype_class = {
 	#"Employee Advance": "custom_scripts.custom_scripts.custom.auto_additional_salary.ERPNextEmployeeAdvance",
-	"POS Invoice Merge Log": "custom_scripts.custom_scripts.custom.sales_invoice.ERPNextPOSInvoiceMergeLog"
+	"POS Invoice Merge Log": "custom_scripts.custom_scripts.custom.sales_invoice.ERPNextPOSInvoiceMergeLog",
+	"NHMCommision": "custom_scripts.custom_scripts.doctype.nhm_commission.NHMCommision"
 }
 # Document Events
 # ---------------

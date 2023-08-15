@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestNHMCommission(FrappeTestCase):
+class Testreprortlog(FrappeTestCase):
 	pass

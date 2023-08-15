@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2022-11-06 13:10:22.220049",
+ "creation": "2023-05-31 12:14:19.709717",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -29,13 +29,13 @@
   {
    "fetch_from": "invoice.grand_total",
    "fieldname": "grand_total",
-   "fieldtype": "Currency",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Grand Total"
   },
   {
    "fieldname": "commison_amount",
-   "fieldtype": "Currency",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Commison Amount"
   }
@@ -43,12 +43,13 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-06 13:14:31.392512",
+ "modified": "2023-06-09 15:39:12.220539",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "NHM Commision Item",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
