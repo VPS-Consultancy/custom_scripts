@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from frappe import _
 import frappe, json
 import requests
 from erpnext.accounts.party import get_dashboard_info
@@ -7,6 +8,7 @@ from erpnext.accounts.doctype.pos_invoice_merge_log.pos_invoice_merge_log import
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.model.mapper import map_doc, map_child_doc
 from frappe.utils import flt
+
 
 def get_mobile_number(customer):
 
@@ -166,3 +168,6 @@ def make_custom_fields(update=True):
 	]
 	}
 	create_custom_fields(custom_fields, ignore_validate = frappe.flags.in_patch, update=update)
+
+
+

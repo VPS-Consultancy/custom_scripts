@@ -66,10 +66,10 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 		if not delivery_note and d.update_stock:
 			delivery_note = d.parent
 
-		# Customized By Thirvusoft
+		# Customized By VPS
 		# Start
-		try:
-			row = {
+
+		row = {
 				"item_code": d.item_code,
 				"item_name": d.si_item_name if d.si_item_name else d.i_item_name,
 				"item_group": d.si_item_group if d.si_item_group else d.i_item_group,
@@ -93,44 +93,9 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 				"cost_center": d.cost_center,
 				"stock_qty": d.stock_qty,
 				"stock_uom": d.stock_uom,
-				# Customized By Thirvusoft
-				# Start
-				"ts_valuation_rate": d.ts_valuation_rate,
-				"ts_avg_selling_price": d.base_net_rate,
-				"ts_valuation_amount": d.stock_qty * d.ts_valuation_rate,
-				"ts_gross_profit": d.base_net_amount - (d.stock_qty * d.ts_valuation_rate),
-				"ts_per_gross_profit": ((d.base_net_amount - d.ts_valuation_rate) / d.ts_valuation_rate) * 100
-				# End
+				
+			}	
 
-			}
-
-		except:
-
-			row = {
-				"item_code": d.item_code,
-				"item_name": d.si_item_name if d.si_item_name else d.i_item_name,
-				"item_group": d.si_item_group if d.si_item_group else d.i_item_group,
-				"description": d.description,
-				"invoice": d.parent,
-				"posting_date": d.posting_date,
-				"customer": d.customer,
-				"customer_name": customer_record.customer_name,
-				"customer_group": customer_record.customer_group,
-				**get_values_for_columns(additional_table_columns, d),
-				"debit_to": d.debit_to,
-				"mode_of_payment": ", ".join(mode_of_payments.get(d.parent, [])),
-				"territory": d.territory,
-				"project": d.project,
-				"company": d.company,
-				"sales_order": d.sales_order,
-				"delivery_note": d.delivery_note,
-				"income_account": d.unrealized_profit_loss_account
-				if d.is_internal_customer == 1
-				else d.income_account,
-				"cost_center": d.cost_center,
-				"stock_qty": d.stock_qty,
-				"stock_uom": d.stock_uom,
-			}
 		# End
 
 		if d.stock_uom != d.uom and d.stock_qty:
@@ -140,6 +105,7 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 
 		total_tax = 0
 		total_other_charges = 0
+		total = 0
 		for tax in tax_columns:
 			item_tax = itemised_tax.get(d.name, {}).get(tax, {})
 			row.update(
@@ -159,9 +125,13 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 				"total_other_charges": total_other_charges,
 				"total": d.base_net_amount + total_tax,
 				"currency": company_currency,
+				"ts_valuation_rate": d.ts_valuation_rate,
+				"ts_avg_selling_price": (d.base_net_amount + total_tax)/d.stock_qty,
+				"ts_valuation_amount": d.stock_qty * d.ts_valuation_rate,
+				"ts_gross_profit": ( d.base_net_amount + total_tax) -(d.stock_qty * d.ts_valuation_rate)  ,
+				"ts_per_gross_profit": (((( d.base_net_amount + total_tax) - d.ts_valuation_rate) / d.ts_valuation_rate) * 100) if d.ts_valuation_rate != 0 else 0.0,
 			}
 		)
-
 		if filters.get("group_by"):
 			row.update({"percent_gt": flt(row["total"] / grand_total) * 100})
 			group_by_field, subtotal_display_field = get_group_by_and_display_fields(filters)
@@ -178,7 +148,9 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 			)
 			add_sub_total_row(row, total_row_map, d.get(group_by_field, ""), tax_columns)
 
+
 		data.append(row)
+
 
 	if filters.get("group_by") and item_list:
 		total_row = total_row_map.get(prev_group_by_value or d.get("item_name"))
@@ -188,6 +160,47 @@ def _execute(filters=None, additional_table_columns=None, additional_conditions=
 		add_sub_total_row(total_row, total_row_map, "total_row", tax_columns)
 		data.append(total_row_map.get("total_row"))
 		skip_total_row = 1
+
+
+
+	if filters.get("group_by") == "Item":
+
+		columns += [
+
+			{
+				"label": _("Valuation Rate"),
+				"fieldname": "ts_valuation_rate",
+				"fieldtype": "Currency",
+				"options": "currency",
+				"width": 120,
+			},
+		
+			{
+				"label": _("Valuation Amount"),
+				"fieldname": "ts_valuation_amount",
+				"fieldtype": "Currency",
+				"options": "currency",
+				"width": 140,
+			},
+			{
+				"label": _("Avg Selling Price"),
+				"fieldname": "ts_avg_selling_price",
+				"fieldtype": "Currency",
+				"options": "currency",
+				"width": 150,
+			},
+		
+			{
+				"label": _("Gross Profit"),
+				"fieldname": "ts_gross_profit",
+				"fieldtype": "Currency",
+				"options": "currency",
+				"width": 120,
+			}
+		]
+
+	# End
+
 
 	return columns, data, None, None, None, skip_total_row
 
@@ -362,55 +375,6 @@ def get_columns(additional_table_columns, filters):
 		},
 	]
 
-	# Customized By Thirvusoft
-	# Start
-
-	if filters.get("group_by") == "Item":
-
-		columns += [
-
-			{
-				"label": _("Valuation Rate"),
-				"fieldname": "ts_valuation_rate",
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 120,
-			},
-		
-			{
-				"label": _("Avg Selling Price"),
-				"fieldname": "ts_avg_selling_price",
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 150,
-			},
-		
-			{
-				"label": _("Valuation Amount"),
-				"fieldname": "ts_valuation_amount",
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 140,
-			},
-		
-			{
-				"label": _("Gross Profit"),
-				"fieldname": "ts_gross_profit",
-				"fieldtype": "Currency",
-				"options": "currency",
-				"width": 120,
-			},
-
-			{
-				"label": _("% Of Gross Profit"),
-				"fieldname": "ts_per_gross_profit",
-				"fieldtype": "Float",
-				"width": 150,
-			}
-		]
-
-	# End
-
 
 	if filters.get("group_by"):
 		columns.append(
@@ -424,7 +388,7 @@ def get_conditions(filters, additional_conditions=None):
 	conditions = ""
 
 	for opts in (
-		("company", " and company=%(company)s"),
+		("company", " and `tabSales Invoice`.company=%(company)s"),
 		("customer", " and `tabSales Invoice`.customer = %(customer)s"),
 		("item_code", " and `tabSales Invoice Item`.item_code = %(item_code)s"),
 		("from_date", " and `tabSales Invoice`.posting_date>=%(from_date)s"),
@@ -473,7 +437,7 @@ def get_group_by_conditions(filters, doctype):
 
 def get_items(filters, additional_query_columns, additional_conditions=None):
 	conditions = get_conditions(filters, additional_conditions)
-	# customized By Thirvusoft
+	# customized By VPS
 	# Start
 	# return frappe.db.sql(
 	# 	"""
@@ -520,16 +484,19 @@ def get_items(filters, additional_query_columns, additional_conditions=None):
 			`tabSales Invoice Item`.`item_name`, `tabSales Invoice Item`.`item_group`,
 			`tabSales Invoice Item`.`item_name` as si_item_name, `tabSales Invoice Item`.`item_group` as si_item_group,
 			`tabItem`.`item_name` as i_item_name, `tabItem`.`item_group` as i_item_group,
-			`tabItem`.`valuation_rate` as ts_valuation_rate,
+			sle.valuation_rate as ts_valuation_rate,
 			`tabSales Invoice Item`.sales_order, `tabSales Invoice Item`.delivery_note,
 			`tabSales Invoice Item`.income_account, `tabSales Invoice Item`.cost_center,
 			`tabSales Invoice Item`.stock_qty, `tabSales Invoice Item`.stock_uom,
 			`tabSales Invoice Item`.base_net_rate, `tabSales Invoice Item`.base_net_amount,
 			`tabSales Invoice`.customer_name, `tabSales Invoice`.customer_group, `tabSales Invoice Item`.so_detail,
 			`tabSales Invoice`.update_stock, `tabSales Invoice Item`.uom, `tabSales Invoice Item`.qty {0}
-		from `tabSales Invoice`, `tabSales Invoice Item`, `tabItem`
+		from `tabSales Invoice`, `tabSales Invoice Item`, `tabItem`, `tabStock Ledger Entry` as sle
+
 		where `tabSales Invoice`.name = `tabSales Invoice Item`.parent and
 			`tabItem`.name = `tabSales Invoice Item`.`item_code` and
+			sle.voucher_no = `tabSales Invoice`.name and sle.voucher_type = 'Sales Invoice' and
+			sle.item_code = `tabSales Invoice Item`.item_code and
 			`tabSales Invoice`.docstatus = 1 {1}
 		""".format(
 			additional_query_columns, conditions
@@ -791,7 +758,7 @@ def add_total_row(
 				"total_tax": 0.0,
 				"total": 0.0,
 				"percent_gt": 0.0,
-				# Customized By Thirvusoft
+				# Customized By VPS
 				# Start
 				"ts_valuation_rate": 0.0,
 				"ts_avg_selling_price": 0.0,
@@ -812,7 +779,7 @@ def add_total_row(
 				"total_tax": 0.0,
 				"total": 0.0,
 				"percent_gt": 0.0,
-				# Customized By Thirvusoft
+				# Customized By VPS
 				# Start
 				"ts_valuation_rate": 0.0,
 				"ts_avg_selling_price": 0.0,
@@ -878,14 +845,14 @@ def add_sub_total_row(item, total_row_map, group_by_value, tax_columns):
 	total_row["total_tax"] += item["total_tax"]
 	total_row["total"] += item["total"]
 	total_row["percent_gt"] += item["percent_gt"]
-	# Customized By Thirvusoft
+	# Customized By VPS
 	# Start
 	try:
 		total_row["ts_valuation_rate"] = item['ts_valuation_rate']
 		total_row["ts_valuation_amount"] += item['ts_valuation_amount']
 		total_row["ts_gross_profit"] += item['ts_gross_profit']
-		total_row["ts_avg_selling_price"] = total_row["amount"] / total_row["stock_qty"]
-		total_row["ts_per_gross_profit"] = (total_row["ts_gross_profit"] / total_row["ts_valuation_amount"])
+		total_row["ts_avg_selling_price"] = total_row["total"] / total_row["stock_qty"]
+
 	except:
 		pass
 	# End
