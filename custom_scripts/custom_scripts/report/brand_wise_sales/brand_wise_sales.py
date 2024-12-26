@@ -28,7 +28,6 @@ def execute(filters=None):
 			})
 			item_group_map[group] = True
 		data.append({
-			"item_name": item.item_name,
 			"brand": item.brand,
 			"amount": item.amount,
 			"indent": 1,
@@ -41,32 +40,36 @@ def execute(filters=None):
 def get_columns():
 	return [
 		{"label": _("Item Group"), "fieldname": "item_group", "fieldtype": "Data", "width": 150},
-		{"label": _("Item Name"), "fieldname": "item_name", "fieldtype": "Data", "width": 120},
 		{"label": _("Brand"), "fieldname": "brand", "fieldtype": "Link", "options": "Brand", "width": 100},
 		{"label": _("Amount"), "fieldname": "amount", "fieldtype": "Currency", "width": 100},
 	]
 
 
 def get_item_info(filters):
-	item = frappe.qb.DocType("Item")
-	sales_invoice_item = frappe.qb.DocType("Sales Invoice Item")
-	sales_invoice = frappe.qb.DocType("Sales Invoice")
-	query = (
-		frappe.qb.from_(item)
-		.join(sales_invoice_item).on(sales_invoice_item.item_code == item.name)
-		.join(sales_invoice).on(sales_invoice_item.parent == sales_invoice.name)
-		.select(
-			item.item_name,
-			item.brand,
-			item.item_group,
-			fn.Sum(sales_invoice_item.amount).as_("amount")
-		)
-		.where(
-			# (item.is_stock_item == 1) &
-			# (item.disabled == 0) &
-			(sales_invoice.docstatus == 1)  # Only include submitted invoices
-		)
-		.groupby(item.name)
-	)
+    item = frappe.qb.DocType("Item")
+    sales_invoice_item = frappe.qb.DocType("Sales Invoice Item")
+    sales_invoice = frappe.qb.DocType("Sales Invoice")
+    
+    query = (
+        frappe.qb.from_(item)
+        .join(sales_invoice_item).on(sales_invoice_item.item_code == item.name)
+        .join(sales_invoice).on(sales_invoice_item.parent == sales_invoice.name)
+        .select(
+            item.item_group,
+            item.brand,
+            fn.Sum(sales_invoice_item.amount).as_("amount")
+        )
+        .where(
+            (sales_invoice.docstatus == 1)  # Only include submitted invoices
+            & (sales_invoice.posting_date >= filters.get("from_date"))
+            & (sales_invoice.posting_date <= filters.get("to_date"))
+        )
+    )
+    
+    # Add brand filter condition if 'brand' is provided in the filters
+    if filters.get("brand"):
+        query = query.where(item.brand == filters.get("brand"))
 
-	return query.run(as_dict=True)
+    query = query.groupby(item.item_group, item.brand)  # Group by item group and brand
+
+    return query.run(as_dict=True)

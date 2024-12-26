@@ -14,6 +14,12 @@ frappe.query_reports["Brand Wise Sales"] = {
 			label: __("To Date"),
 			fieldtype: "Date",
 			default: frappe.datetime.get_today(),
+		},
+		{
+			fieldname: "brand",
+			label: __("Brand"),
+			fieldtype: "Link",
+			options: "Brand",	
 		}
 	],
 };
