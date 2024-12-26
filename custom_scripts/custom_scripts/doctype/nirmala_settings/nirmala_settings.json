@@ -11,7 +11,9 @@
   "column_break_4",
   "password",
   "daily_summary_section",
-  "cash_account"
+  "cash_account",
+  "hr_settings_section",
+  "automate_additional_salary_from_payment_entry"
  ],
  "fields": [
   {
@@ -53,12 +55,23 @@
    "fieldtype": "Link",
    "label": "Cash Account",
    "options": "Account"
+  },
+  {
+   "fieldname": "hr_settings_section",
+   "fieldtype": "Section Break",
+   "label": "HR Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "automate_additional_salary_from_payment_entry",
+   "fieldtype": "Check",
+   "label": "Automate Additional Salary From Payment Entry"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-28 12:24:22.155737",
+ "modified": "2024-07-04 10:45:13.125069",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "Nirmala Settings",
@@ -77,5 +90,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

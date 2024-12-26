@@ -104,7 +104,11 @@ doc_events = {
 	# }
 	"Journal Entry":{
 		"on_submit": "custom_scripts.custom_scripts.custom.journal_entry_custom.make_nhm_paid"
-	}
+	},
+	"Payment Entry":{
+		"on_submit":"custom_scripts.custom_scripts.custom.py.payment_entry.on_submit",
+		"on_cancel":"custom_scripts.custom_scripts.custom.py.payment_entry.on_cancel",
+	},
 }
 # Scheduled Tasks
 # ---------------

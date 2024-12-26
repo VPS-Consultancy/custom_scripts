@@ -1,24 +1,24 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-09-19 11:02:35.735837",
+ "creation": "2024-07-11 13:05:23.370303",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_bv6u"
+  "section_break_sa7h"
  ],
  "fields": [
   {
-   "fieldname": "section_break_bv6u",
+   "fieldname": "section_break_sa7h",
    "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 11:02:35.735837",
+ "modified": "2024-07-11 13:05:23.370303",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
- "name": "NHM Commission",
+ "name": "POS Offer",
  "owner": "Administrator",
  "permissions": [
   {

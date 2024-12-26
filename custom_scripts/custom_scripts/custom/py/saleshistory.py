@@ -52,7 +52,7 @@ def fetch_rate_details(item_code, customer):
                     }
                 )
                 doc_count += 1
-            if doc_count == 5:
+            if doc_count == 2:
                 break
 
     return rate_details
