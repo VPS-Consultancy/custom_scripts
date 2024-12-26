@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2024-11-08 15:04:45.287680",
  "disabled": 0,
@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2024-11-08 15:04:45.287680",
+ "modified": "2024-12-26 18:19:42.421860",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "Brand Wise Sales",

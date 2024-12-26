@@ -57,7 +57,7 @@ def get_item_info(filters):
         .select(
             item.item_group,
             item.brand,
-            fn.Sum(sales_invoice_item.amount).as_("amount")
+            fn.Sum(sales_invoice_item.base_net_amount).as_("amount")
         )
         .where(
             (sales_invoice.docstatus == 1)  # Only include submitted invoices
