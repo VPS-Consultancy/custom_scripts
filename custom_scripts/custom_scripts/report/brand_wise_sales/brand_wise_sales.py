@@ -8,6 +8,7 @@ import frappe
 from frappe import _
 from frappe.query_builder import functions as fn
 from frappe.utils import getdate
+from frappe.query_builder.functions import Coalesce
 
 def execute(filters=None):
 	if not filters:
@@ -29,11 +30,12 @@ def execute(filters=None):
 			item_group_map[group] = True
 		data.append({
 			"brand": item.brand,
-			"amount": item.amount,
+			"amount": (item.amount or 0) + (item.cgst_amount or 0) + (item.sgst_amount or 0) + (item.igst_amount or 0),
 			"indent": 1,
 			"has_value": 1,
 		})
 
+	frappe.errprint(data)
 	return columns, data
 
 
@@ -46,30 +48,45 @@ def get_columns():
 
 
 def get_item_info(filters):
-    item = frappe.qb.DocType("Item")
-    sales_invoice_item = frappe.qb.DocType("Sales Invoice Item")
-    sales_invoice = frappe.qb.DocType("Sales Invoice")
-    
-    query = (
-        frappe.qb.from_(item)
-        .join(sales_invoice_item).on(sales_invoice_item.item_code == item.name)
-        .join(sales_invoice).on(sales_invoice_item.parent == sales_invoice.name)
-        .select(
-            item.item_group,
-            item.brand,
-            fn.Sum(sales_invoice_item.base_net_amount).as_("amount")
-        )
-        .where(
-            (sales_invoice.docstatus == 1)  # Only include submitted invoices
-            & (sales_invoice.posting_date >= filters.get("from_date"))
-            & (sales_invoice.posting_date <= filters.get("to_date"))
-        )
-    )
-    
-    # Add brand filter condition if 'brand' is provided in the filters
-    if filters.get("brand"):
-        query = query.where(item.brand == filters.get("brand"))
+	si = frappe.qb.DocType("Sales Invoice")
+	sii = frappe.qb.DocType("Sales Invoice Item")
+	item = frappe.qb.DocType("Item")
+	
+	# Check if fields exist in the table
+	table_columns = frappe.db.get_table_columns("Sales Invoice Item")
+	
+	tax_fields = []
+	if "cgst_amount" in table_columns:
+		tax_fields.append(Coalesce(sii.cgst_amount, 0).as_("cgst_amount"))
+   
+	if "sgst_amount" in table_columns:
+		tax_fields.append(Coalesce(sii.sgst_amount, 0).as_("sgst_amount"))
+	
+	if "igst_amount" in table_columns:
+		tax_fields.append(Coalesce(sii.igst_amount, 0).as_("igst_amount"))
+	
+	# Build query with dynamic inclusion of tax fields
+	query = (
+		frappe.qb.from_(si)
+		.join(sii).on(si.name == sii.parent)
+		.left_join(item).on(sii.item_code == item.name)
+		.select(
+			item.item_group,
+			item.brand,
+			fn.Sum(sii.base_net_amount).as_("amount"),
+			*tax_fields,  # Dynamically include only existing tax fields
+		)
+		.where(
+			(si.docstatus == 1)
+			& (si.posting_date >= filters.get("from_date"))
+			& (si.posting_date <= filters.get("to_date"))
+		)
+	)
+	
+	# Add brand filter condition if 'brand' is provided in the filters
+	if filters.get("brand"):
+		query = query.where(item.brand == filters.get("brand"))
+	
+	query = query.groupby(item.item_group, item.brand)
 
-    query = query.groupby(item.item_group, item.brand)  # Group by item group and brand
-
-    return query.run(as_dict=True)
+	return query.run(as_dict=True)
