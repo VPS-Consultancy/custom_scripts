@@ -19,6 +19,8 @@ def make_nhm_paid(doc,method):
                                             where 
                                                 nhm.name = '{doc.homemart_commission}'
                                          """,as_dict=1)
-                frappe.db.set_value("Sales Invoice",nhm_doc[0]['invoice'],{'nhm_commission_status':"Paid"})
+                if nhm_doc:
+                    for j in nhm_doc:
+                        frappe.db.set_value("Sales Invoice",j['invoice'],{'nhm_commission_status':"Paid"})
 
                 

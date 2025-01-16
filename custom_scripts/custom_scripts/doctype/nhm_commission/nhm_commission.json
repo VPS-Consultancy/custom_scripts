@@ -1,21 +1,22 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-09-19 11:02:35.735837",
+ "creation": "2024-12-27 16:20:12.648450",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_bv6u"
+  "name1"
  ],
  "fields": [
   {
-   "fieldname": "section_break_bv6u",
-   "fieldtype": "Section Break"
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "label": "Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 11:02:35.735837",
+ "modified": "2024-12-27 16:20:26.917387",
  "modified_by": "Administrator",
  "module": "Custom Scripts",
  "name": "NHM Commission",
