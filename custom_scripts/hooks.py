@@ -179,3 +179,4 @@ user_data_fields = [
 	}
 ]
 
+cors = ["*"]
